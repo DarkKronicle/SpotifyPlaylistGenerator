@@ -33,11 +33,13 @@ class AristTracksInstruction(ArtistInstruction):
             self.artist = artist_mod.get_artist(self.artist, sp)
         tracks = self.get_artist().get_tracks(sp)
         if len(tracks) > self.fetch:
-            tracks = tracks[self.fetch]
+            tracks = tracks[:self.fetch]
         if self.fetch == self.select:
             songs.extend(tracks)
             return songs
-        songs.extend(random.sample(songs, self.select))
+        tracks = random.sample(tracks, self.select)
+        print(tracks)
+        songs.extend(tracks)
         return songs
 
 

@@ -74,3 +74,15 @@ name = "Background Grooves"
     # Clears tracks before a specific date. In my case I want more modern songs. Especially modern jazz.
     type = 'clear_before'
     max_date = '1985-01-01'
+
+[[instructions]]
+    type = "artist_tracks"
+    artist = "fox capture plan"
+    fetch = 100
+    select = 25
+
+[[instructions]]
+    type = "artist_tracks"
+    artist = "insaneintherainmusic"
+    fetch = 100
+    select = 30
