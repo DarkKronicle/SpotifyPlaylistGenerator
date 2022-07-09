@@ -1,0 +1,9 @@
+client_id = 'CLIENT_ID_HERE'
+client_secret = 'CLIENT_SECRET_HERE'
+
+# Oh no I'll be doxxed if I leave this!
+# This is fine to leave like this. Make sure you configure this URL in the spotify dashboard
+redirect_uri = 'https://localhost:8888/callback'
+
+# Playlist to generate. In console this will output a lot of links. Copy and paste it into a new playlist.
+playlist_generate = "playlists/background.toml"
