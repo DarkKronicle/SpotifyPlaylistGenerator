@@ -21,6 +21,6 @@ class ConfigManager:
         return data, Playlist.from_dict(data)
 
     def __getitem__(self, item: str):
-        if item.upper() in os.environ:
-            return os.environ[item.upper()]
+        if item.lower() in os.environ:
+            return os.environ[item.lower()]
         return self.config.get(item)
