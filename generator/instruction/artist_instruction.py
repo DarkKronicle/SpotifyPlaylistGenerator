@@ -38,7 +38,6 @@ class AristTracksInstruction(ArtistInstruction):
             songs.extend(tracks)
             return songs
         tracks = random.sample(tracks, self.select)
-        print(tracks)
         songs.extend(tracks)
         return songs
 

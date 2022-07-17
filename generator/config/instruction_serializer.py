@@ -2,7 +2,8 @@ import generator.instruction.condition_instruction as condition
 import generator.instruction.user_instruction as user
 import generator.instruction.artist_instruction as artist
 import generator.instruction.recommendation_instruction as recommendation
-
+import generator.instruction.search_instruction as search
+import generator.instruction.playlist_instruction as playlist
 
 instruction_types = {
     'clear_duplicates': condition.ClearDuplicates,
@@ -15,6 +16,8 @@ instruction_types = {
     'artist_tracks': artist.AristTracksInstruction,
     'recommendations': recommendation.RecommendationInstruction,
     'random': condition.RandomInstruction,
+    'search': search.SearchInstruction,
+    'playlist': playlist.PlaylistInstruction,
 }
 
 

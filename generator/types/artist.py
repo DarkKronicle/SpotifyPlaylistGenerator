@@ -63,7 +63,7 @@ def parse_artists(artist_list) -> list[Artist]:
     return artists
 
 
-@cache.cache(maxsize=1000)
+@cache.cache()
 def get_artist(name, sp) -> Artist:
     results = sp.search(q='artist:' + name, type='artist')
     items = results['artists']['items']

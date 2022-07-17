@@ -44,7 +44,7 @@ def parse_tracks_list(tracks_data):
     return tracks
 
 
-@cache.cache(maxsize=1000)
+@cache.cache()
 def get_track(name, sp):
     result = sp.search(name, type='track', limit=1)
     return Track.from_json(result['tracks']['items'][0])

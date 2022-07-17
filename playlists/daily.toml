@@ -1,0 +1,20 @@
+name = 'My Current Bops'
+daily = true
+
+[[instructions]]
+    type = "saved_tracks"
+    amount = 30
+    randomize = true
+
+[[instructions]]
+    type = "user_top_tracks"
+    term = 'short'
+    amount = 50
+
+[[instructions]]
+    type = "user_top_tracks"
+    term = 'medium'
+    amount = 10
+
+[[instructions]]
+    type = "clear_duplicates"

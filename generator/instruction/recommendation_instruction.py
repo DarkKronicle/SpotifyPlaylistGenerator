@@ -15,8 +15,6 @@ class RecommendationInstruction(Instruction):
         self.tracks = tracks
         self.artists = artists
         self.genres = genres
-        if len(self.tracks) + len(self.artists) + len(self.genres) > 5:
-            raise AssertionError('Seeds cannot be greater than 5')
         self.kwargs = kwargs
 
     def run(self, songs, sp):
@@ -26,7 +24,7 @@ class RecommendationInstruction(Instruction):
         if isinstance(self.tracks, dict):
             self.tracks = instruct.get_instruction(self.tracks).run([], sp)
         if all(isinstance(t, str) for t in self.tracks):
-            self.tracks = [track.get_track(t) for t in self.tracks]
+            self.tracks = [track.get_track(t, sp) for t in self.tracks]
         songs.extend(track.parse_tracks_list(
             sp.recommendations(
                 seed_artists=[a.artist_id for a in self.artists],
