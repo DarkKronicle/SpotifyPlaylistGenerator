@@ -1,0 +1,25 @@
+name: Update
+on:
+  # 8pm UTC is in the middle of the night
+  schedule: [{cron: "0 8 * * *"}]
+jobs:
+  update-playlists:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8 #install the python needed
+      - name: python requirements
+        run: |
+          pip install -r requirements.txt
+      - name: execute py script # run the run.py to get the latest data
+        run: |
+          python run.py
+        env:
+          client_id: ${{ secrets.CLIENT_ID }}
+          client_secret: ${{ secrets.CLIENT_SECRET }}
+          redirect_uri: ${{ secrets.REDIRECT_URI }}
+          saved_token: ${{ secrets.SAVED_TOKEN }}
