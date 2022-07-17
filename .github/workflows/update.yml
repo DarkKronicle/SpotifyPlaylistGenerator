@@ -2,6 +2,8 @@ name: Update
 on:
   # 8pm UTC is in the middle of the night
   schedule: [{cron: "0 8 * * *"}]
+  # Let it be manually triggered
+  workflow_dispatch:
 jobs:
   update-playlists:
     runs-on: ubuntu-latest
