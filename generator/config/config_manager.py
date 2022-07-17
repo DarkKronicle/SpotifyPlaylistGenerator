@@ -10,8 +10,11 @@ class ConfigManager:
         self.config = self.load_file('config.toml')
 
     def load_file(self, file):
-        with open(str(file), 'r', encoding='utf-8') as f:
-            return toml.load(f)
+        try:
+            with open(str(file), 'r', encoding='utf-8') as f:
+                return toml.load(f)
+        except:
+            return dict()
 
     def load_playlist(self, file):
         data = self.load_file(file)
