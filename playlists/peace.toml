@@ -2,7 +2,7 @@ name = "Peace"
 daily = true
 
 [[instructions]]
-    type = "playlist"
+    type = "playlist_tracks"
     name = "Saved: Peace"
 
 [[instructions]]
@@ -36,11 +36,6 @@ daily = true
     max_energy = 0.3
 
 [[instructions]]
-    # Clears tracks before a specific date. In my case I want more modern songs. Especially modern jazz.
-    type = 'clear_before'
-    max_date = '1985-01-01'
-
-[[instructions]]
     # You can also add genres https://developer.spotify.com/console/get-available-genre-seeds/
     type = "recommendations"
     tracks = ["Rest by Pheeno"]
@@ -65,7 +60,3 @@ daily = true
     max_speechiness = 0.1
     limit = 30
     max_energy = 0.3
-
-[[instructions]]
-    # Clears duplicate tracks
-    type = 'clear_duplicates'

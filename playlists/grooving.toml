@@ -3,7 +3,7 @@ name = "Grooving"
 daily = true
 
 [[instructions]]
-    type = "playlist"
+    type = "playlist_tracks"
     name = "Saved: Bops"
 
 [[instructions]]
@@ -54,7 +54,3 @@ daily = true
     limit = 15
     max_energy = 0.7
     min_energy = 0.4
-
-[[instructions]]
-    # Clears duplicate tracks
-    type = 'clear_duplicates'

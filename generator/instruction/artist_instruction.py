@@ -1,86 +1,31 @@
-from generator.instruction.instruction import Instruction
-from ..types.artist import Artist
-import generator.types.artist as artist_mod
 import random
+from . import *
 
 
-class ArtistInstruction(Instruction):
-
-    def get_artist(self):
-        raise NotImplementedError
-
-    def set_artist(self, artist):
-        raise NotImplementedError
-
-
-class AristTracksInstruction(ArtistInstruction):
-
-    def __init__(self, artist: Artist=None, fetch=20, select=20):
-        self.artist = artist
-        self.fetch = fetch
-        self.select = select
-        if fetch < select:
-            raise AssertionError("Fetch cannot be less than sample!")
-
-    def get_artist(self):
-        return self.artist
-
-    def set_artist(self, artist):
-        self.artist = artist
-
-    def run(self, songs, sp):
-        if isinstance(self.artist, str):
-            self.artist = artist_mod.get_artist(self.artist, sp)
-        tracks = self.get_artist().get_tracks(sp)
-        if len(tracks) > self.fetch:
-            tracks = tracks[:self.fetch]
-        if self.fetch == self.select:
-            songs.extend(tracks)
-            return songs
-        tracks = random.sample(tracks, self.select)
-        songs.extend(tracks)
-        return songs
+@instruction('artist_tracks')
+def artist_tracks(sp, artist: tk.model.Artist = None, fetch: int = 50, select: int = 50) -> list[tk.model.Track]:
+    tracks = spotify.get_artist_songs(sp, artist)
+    if len(tracks) > fetch:
+        tracks = tracks[:fetch]
+    if fetch == select:
+        return tracks
+    tracks = random.sample(tracks, select)
+    return tracks
 
 
-class ArtistTopInstruction(ArtistInstruction):
-
-    def __init__(self, artist: Artist=None, amount=10):
-        self.artist = artist
-        self.amount = amount
-
-    def get_artist(self):
-        return self.artist
-
-    def set_artist(self, artist):
-        self.artist = artist
-
-    def run(self, songs, sp):
-        if isinstance(self.artist, str):
-            self.artist = artist_mod.get_artist(self.artist, sp)
-        songs.extend(self.get_artist().get_top_tracks(sp, self.amount))
-        return songs
+@instruction('artist_top')
+def artist_top(sp: tk.Spotify, artist: tk.model.Artist = None, amount: int = 10) -> list[tk.model.Track]:
+    return sp.artist_top_tracks(artist, amount=amount)
 
 
-class RelatedArtistInstruction(ArtistInstruction):
-
-    def __init__(self, artist: Artist=None, instruction: ArtistInstruction=None, amount=20):
-        self.artist = artist
-        self.instruction = instruction
-        self.amount = amount
-
-    def set_artist(self, artist):
-        self.artist = artist
-
-    def get_artist(self):
-        return self.artist
-
-    def run(self, songs, sp):
-        if isinstance(self.artist, str):
-            self.artist = artist_mod.get_artist(self.artist, sp)
-        related = artist_mod.parse_artists(sp.artist_related_artists(self.get_artist().uri)['artists'])
-        if len(related) > self.amount:
-            related = related[:self.amount]
-        for artist in related:
-            self.instruction.set_artist(artist)
-            self.instruction.run(songs, sp)
-        return songs
+@instruction('related_artists')
+def related_artists(sp: tk.Spotify, artist: tk.model.Artist = None, instruction: Instruction = None, amount: int = 20) -> list[tk.model.Track]:
+    related = sp.artist_related_artists(artist.id)
+    if len(related) > amount:
+        related = related[:amount]
+    songs = []
+    for artist in related:
+        kwargs = instruction[1]
+        kwargs['artist'] = artist
+        songs.extend(instruction[0].run(sp, **kwargs))
+    return songs

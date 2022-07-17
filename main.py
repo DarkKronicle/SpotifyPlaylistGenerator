@@ -1,51 +1,69 @@
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-import os
 import generator.config.config_manager as config
-from generator.util.EnvironmentCacheHandler import EnvironmentCacheHandler
 import pathlib
-import generator.types.playlist as playlist_mod
+import tekore as tk
+import generator.spotify as spotify
+import generator.instruction as instruction
+import importlib
 
 
-def set_playlist(sp, playlists, file, manager):
-    playlist, instruction = manager.load_playlist(file)
-    if playlist['daily'] == False:
+def set_playlist(sp: tk.Spotify, file, manager):
+    playlist = manager.load_playlist(file)
+    if not playlist.get('daily', True):
         return
+
+    songs = []
+    for data in playlist['instructions']:
+        songs.extend(instruction.run(sp, data))
+
+    playlists = spotify.get_user_playlists(sp)
     name = playlist['name']
     playlist_id = None
     for p in playlists:
         if p.name.lower() == name.lower():
-            playlist_id = p.playlist_id
+            playlist_id = p.id
             break
+
     if playlist_id is None:
-        playlist_id = playlist_mod.Playlist.from_json(sp.user_playlist_create(sp.me()['id'], name)).playlist_id
-    songs = instruction.run(sp)
-    if len(songs) <= 100:
-        sp.playlist_replace_items(playlist_id, [song.track_id for song in songs])
-        return
-    sp.playlist_replace_items(playlist_id, [song.track_id for song in songs[:100]])
-    for i in range(len(songs) // 100 - 1):
-        max_num = min((i + 1) * 100, len(songs))
-        sp.playlist_add_items(songs[i * 100:max_num])
+        playlist_id = sp.playlist_create(sp.current_user.id).id
+
+    sp.playlist_replace(playlist_id, [t.uri for t in songs[:min(100, len(songs))]])
+
+    if len(songs) > 100:
+        for i in range(len(songs) // 100 - 1):
+            max_num = min((i + 1) * 100, len(songs))
+            sp.playlist_add(playlist_id, [t.uri for t in songs[i * 100:max_num]])
+
+    print('Done with ' + str(len(songs)) + ' songs')
 
 
 def main():
     manager = config.ConfigManager()
 
-    os.environ["SAVED_TOKEN"] = manager['saved_token']
-    os.environ["SPOTIPY_CLIENT_ID"] = manager['client_id']
-    os.environ["SPOTIPY_CLIENT_SECRET"] = manager['client_secret']
-    os.environ["SPOTIPY_REDIRECT_URI"] = manager['redirect_uri']
+    scopes = {
+        tk.scope.user_library_read,
+        tk.scope.user_top_read,
+        tk.scope.playlist_read_collaborative,
+        tk.scope.playlist_read_private,
+        tk.scope.playlist_modify_private,
+        tk.scope.playlist_modify_public,
+    }
 
-    scope = "user-library-read,user-top-read,playlist-read-collaborative,playlist-read-private,user-read-private,playlist-modify-private,playlist-modify-public"
+    for file in list(pathlib.Path('generator/instruction').glob('**/*.py')):
+        importlib.import_module('' + str(file).replace('\\', '.').replace('/', '.')[:-3], package=__package__)
 
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, cache_handler=EnvironmentCacheHandler(os.environ["SAVED_TOKEN"])))
-    playlists = playlist_mod.parse_playlist_list(sp.current_user_playlists(limit=50)['items'])
-    for playlist in playlists:
-        playlist_mod.get_playlist.set(playlist, sp, playlist.name)
+    tk.client_id_var = manager['client_id']
+    tk.client_secret_var = manager['client_secret']
+    tk.redirect_uri_var = manager['redirect_uri']
+    tk.user_refresh_var = manager['saved_token']
+
+    app_token = tk.request_client_token(tk.client_id_var, tk.client_secret_var)
+
+    sp = tk.Spotify(app_token, chunked_on=True)
+    sp.token = tk.refresh_user_token(tk.client_id_var, tk.client_secret_var, tk.user_refresh_var)
 
     for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
-        set_playlist(sp, playlists, str(playlist), manager)
+        print('Loading playlist ' + str(playlist))
+        set_playlist(sp, str(playlist), manager)
 
 
 if __name__ == '__main__':

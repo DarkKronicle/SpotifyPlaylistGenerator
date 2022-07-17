@@ -1,6 +1,5 @@
 import toml
 
-from generator.config.playlist import Playlist
 import os
 
 
@@ -18,7 +17,7 @@ class ConfigManager:
 
     def load_playlist(self, file):
         data = self.load_file(file)
-        return data, Playlist.from_dict(data)
+        return data
 
     def __getitem__(self, item: str):
         if item.lower() in os.environ:

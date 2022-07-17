@@ -1,19 +1,11 @@
-from generator.instruction.instruction import Instruction
-import generator.types.track as track
+from . import *
 import random
 
 
-class SearchInstruction(Instruction):
-
-    def __init__(self, search=None, limit=50, choose=10, offset=0):
-        self.search = search
-        self.choose = choose
-        self.limit = limit
-        self.offset = offset
-
-    def run(self, songs, sp):
-        tracks = sp.search(q=self.search, type='track', limit=self.limit, offset=self.offset)['tracks']
-        if self.choose < self.limit:
-            tracks = random.sample(tracks, self.choose)
-        songs.extend(track.parse_tracks_list(tracks))
-        return songs
+@instruction('search')
+def search(sp: tk.Spotify, search: str, limit: int = 50, choose: int = 10, offset: int = 0) -> list[tk.model.Track]:
+    paging: tk.model.FullTrackPaging = sp.search(q=search, type='track', limit=limit, offset=offset)[0]
+    tracks = paging.items
+    if choose < limit:
+        tracks = random.sample(tracks, choose)
+    return tracks
