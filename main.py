@@ -11,11 +11,13 @@ def set_playlist(sp: tk.Spotify, file, manager):
     if not playlist.get('daily', True):
         return
 
+    # We want to cache user stuff first
+    playlists = spotify.get_user_playlists(sp)
+
     songs = []
     for data in playlist['instructions']:
         songs.extend(instruction.run(sp, data))
-
-    playlists = spotify.get_user_playlists(sp)
+    
     name = playlist['name']
     playlist_id = None
     for p in playlists:
