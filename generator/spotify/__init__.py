@@ -58,3 +58,24 @@ def get_artist_albums(sp: tk.Spotify, artist: tk.model.Artist):
 @cache()
 def get_playlist_tracks(sp: tk.Spotify, playlist: tk.model.Playlist):
     return [t.track for t in sp.all_items(sp.playlist_items(playlist.id, limit=100))]
+
+
+def replace_all_playlist(sp, playlist: str, songs: list[tk.model.Track]):
+    if isinstance(playlist, tk.model.Playlist):
+        playlist = playlist.id
+
+    sp.playlist_replace(playlist, [t.uri for t in songs[:min(100, len(songs))]])
+
+    if len(songs) > 100:
+        for i in range(1, len(songs) // 100 + 1):
+            max_num = min((i + 1) * 100, len(songs))
+            sp.playlist_add(playlist, [t.uri for t in songs[i * 100:max_num]])
+
+
+def get_or_create_playlist(sp, name):
+    playlists = get_user_playlists(sp)
+    for p in playlists:
+        if p.name.lower() == name.lower():
+            return p
+    return sp.playlist_create(sp.current_user.id)
+

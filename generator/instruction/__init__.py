@@ -3,6 +3,8 @@ import inspect
 import tekore as tk
 import generator.spotify as spotify
 import typing
+import pathlib
+import importlib
 
 
 # All you haters can hate this class, but I find it awesome
@@ -273,3 +275,12 @@ def run_instruction(name, sp, **kwargs):
     :return: The result of the ran instruction
     """
     return _instructions[name].run(sp, **kwargs)
+
+
+def setup():
+    """
+    Loads in all the instructions
+    :return:
+    """
+    for file in list(pathlib.Path('generator/instruction').glob('**/*.py')):
+        importlib.import_module(str(file).replace('\\', '.').replace('/', '.')[:-3], package=__package__)

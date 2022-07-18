@@ -1,5 +1,6 @@
 name = "Peace"
 daily = true
+clear_duplicates = true
 
 [[instructions]]
     type = "playlist_tracks"

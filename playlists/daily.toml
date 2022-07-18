@@ -1,5 +1,6 @@
 name = 'My Current Bops'
 daily = true
+clear_duplicates = true
 
 [[instructions]]
     type = "saved_tracks"

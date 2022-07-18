@@ -1,6 +1,7 @@
 # Name of the track
 name = "Grooving"
 daily = true
+clear_duplicates = true
 
 [[instructions]]
     type = "playlist_tracks"
