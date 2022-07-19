@@ -1,3 +1,4 @@
+import generator
 from . import *
 import generator.spotify as spotify
 
@@ -17,6 +18,9 @@ def clear_duplicates(sp, songs, active: bool):
 
 @modifier('upload', sort=5)
 def upload(sp, songs, name: str = None):
+    if generator.prevent_uploading:
+        generator.logger.info('Uploading songs for ' + name + ' was skipped because prevent_uploading is on')
+        return songs
     playlist_id = spotify.get_or_create_playlist(sp, name)
     spotify.replace_all_playlist(sp, playlist_id, songs)
     return songs

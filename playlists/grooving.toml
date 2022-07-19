@@ -1,10 +1,8 @@
 clear_duplicates = true
 region = 'US'
 
-
 [upload]
     name = "Grooving"
-
 
 [[instructions]]
     type = "playlist_tracks"

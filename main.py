@@ -1,47 +1,57 @@
-import generator.config.config_manager as config
 import pathlib
 import tekore as tk
-import generator.spotify as spotify
-import generator.instruction as instruction
-import generator.modifier as modifier
+import generator
+
+import argparse
+import sys
+import logging
 
 
-def set_playlist(sp: tk.Spotify, file, manager):
-    playlist = manager.load_playlist(file)
-    songs = playlist.get_songs(sp)
-    print('Done with ' + str(len(songs)) + ' songs')
+def get_args():
+    parser = argparse.ArgumentParser(description='Generates playlists for a user')
+    parser.add_argument('-a', '--all', required=False, action='store_true',
+                        help='Generate all playlists')
+    parser.add_argument('--no-upload', required=False, action='store_true',
+                        help='Prevents playlists from being modified')
+    parser.add_argument('-p', '--playlist', required=False,
+                        help='Generate a specific playlist')
+    if len(sys.argv) <= 1:
+        parser.error('No arguments provided.')
+    args = parser.parse_args()
+    if not args.playlist and not args.all:
+        parser.error('You have to either specify a playlist or all.')
+    return args
 
 
 def main():
-    manager = config.ConfigManager()
+    args = get_args()
 
-    scopes = {
-        tk.scope.user_library_read,
-        tk.scope.user_top_read,
-        tk.scope.playlist_read_collaborative,
-        tk.scope.playlist_read_private,
-        tk.scope.playlist_modify_private,
-        tk.scope.playlist_modify_public,
-    }
+    logging.basicConfig(
+        level='INFO',
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        datefmt='%m-%d %H:%M:%S'
+    )
 
-    tk.client_id_var = manager['client_id']
-    tk.client_secret_var = manager['client_secret']
-    tk.redirect_uri_var = manager['redirect_uri']
-    tk.user_refresh_var = manager['saved_token']
+    if args.no_upload:
+        generator.prevent_uploading = True
 
-    app_token = tk.request_client_token(tk.client_id_var, tk.client_secret_var)
+    manager = generator.config.ConfigManager()
 
-    sp = tk.Spotify(app_token, chunked_on=True)
+    sp = tk.Spotify(generator.get_default_token(manager), chunked_on=True)
     sp.token = tk.refresh_user_token(tk.client_id_var, tk.client_secret_var, tk.user_refresh_var)
 
     # We want to cache user stuff first
-    instruction.setup()
-    modifier.setup()
-    spotify.get_user_playlists(sp)
+    generator.setup(sp)
 
-    for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
-        print('Loading playlist ' + str(playlist))
-        set_playlist(sp, str(playlist), manager)
+    if args.all:
+        for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
+            generator.run_playlist_file(sp, str(playlist))
+
+    if args.playlist:
+        file = str(args.playlist)
+        if not file.startswith('playlists/'):
+            file = 'playlists/' + file
+        generator.run_playlist_file(sp, file)
 
 
 if __name__ == '__main__':

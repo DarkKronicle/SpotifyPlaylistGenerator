@@ -3,21 +3,18 @@ import os
 import generator.config.playlist as playlist
 
 
+def load_file(file):
+    try:
+        with open(str(file), 'r', encoding='utf-8') as f:
+            return toml.load(f)
+    except:
+        return dict()
+
+
 class ConfigManager:
 
     def __init__(self):
-        self.config = self.load_file('config.toml')
-
-    def load_file(self, file):
-        try:
-            with open(str(file), 'r', encoding='utf-8') as f:
-                return toml.load(f)
-        except:
-            return dict()
-
-    def load_playlist(self, file):
-        data = self.load_file(file)
-        return playlist.Playlist(data)
+        self.config = load_file('config.toml')
 
     def __getitem__(self, item: str):
         if item.lower() in os.environ:
