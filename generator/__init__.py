@@ -57,3 +57,10 @@ def run_playlist(sp: tk.Spotify, playlist):
     songs = playlist.get_songs(sp)
     logger.info('Done with ' + str(len(songs)) + ' songs')
 
+
+def show_all_help():
+    instruction.setup()
+    modifier.setup()
+    instruction.show_all_help()
+    print('-------------')
+    modifier.show_all_help()

@@ -5,6 +5,11 @@ import generator.spotify as spotify
 
 @modifier('clear_duplicates')
 def clear_duplicates(sp, songs, active: bool):
+    """
+    Clears duplicates
+
+    active (bool) - Whether it is active
+    """
     if not active:
         return songs
     names = []
@@ -18,6 +23,11 @@ def clear_duplicates(sp, songs, active: bool):
 
 @modifier('upload', sort=5)
 def upload(sp, songs, name: str = None):
+    """
+    Upload to Spotify under a specific name. This clears out the playlist and replaces ALL tracks.
+
+    name (string) - Name of the playlist. It will be created if it does not exist.
+    """
     if generator.prevent_uploading:
         generator.logger.info('Uploading songs for ' + name + ' was skipped because prevent_uploading is on')
         return songs
@@ -28,6 +38,11 @@ def upload(sp, songs, name: str = None):
 
 @modifier('region')
 def allowed_region(sp, songs, region: str = 'US'):
+    """
+    Filters tracks to a specific region. This is useful if you only want songs that can play where you are.
+
+    region (string) - Region code to filter for
+    """
     new_songs = []
     # Here is a list of all the available markets
     """AD, AE, AG, AL, AM, AO, AR, AT, AU, AZ, BA, BB, BD, BE, BF, BG, BH, BI, BJ, BN, BO, BR, BS, BT, BW, BY, BZ, 

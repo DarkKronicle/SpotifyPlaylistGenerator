@@ -35,6 +35,7 @@ class Instruction:
 
 
 _instructions: dict[str, Instruction] = {}
+_help = {}
 
 
 def _map_parameters(signature: inspect.Signature, *args, **kwargs):
@@ -241,6 +242,7 @@ def instruction(name: str):
 
         # Add it to the dictionary
         _instructions[name] = instruction_obj
+        _help[name] = func.__doc__
 
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -284,3 +286,11 @@ def setup():
     """
     for file in list(pathlib.Path('generator/instruction').glob('**/*.py')):
         importlib.import_module(str(file).replace('\\', '.').replace('/', '.')[:-3], package=__package__)
+
+
+def show_all_help():
+    for name, detail in _help.items():
+        print("""---
+        Instruction: {0}
+        {1}
+        """.format(name.strip(), detail.strip()).replace('\t', '').replace('    ', ''))

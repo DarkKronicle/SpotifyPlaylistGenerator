@@ -5,6 +5,7 @@ import pathlib
 
 _modifiers = {}
 _sort = {}
+_help = {}
 
 
 def modifier(name: str, sort: int = 0):
@@ -13,6 +14,7 @@ def modifier(name: str, sort: int = 0):
 
         _modifiers[name] = func
         _sort[name] = sort
+        _help[name] = func.__doc__
 
         @wraps(func)
         def wrapper(sp, songs, *args, **kwargs):
@@ -49,3 +51,11 @@ def setup():
     """
     for file in list(pathlib.Path('generator/modifier').glob('**/*.py')):
         importlib.import_module(str(file).replace('\\', '.').replace('/', '.')[:-3], package=__package__)
+
+
+def show_all_help():
+    for name, detail in _help.items():
+        print("""---
+        Modifier: {0}
+        {1}
+        """.format(name.strip(), detail.strip()).replace('\t', '').replace('    ', ''))

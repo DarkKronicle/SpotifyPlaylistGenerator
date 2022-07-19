@@ -4,34 +4,43 @@ import generator.spotify as spotify
 
 
 @instruction('saved_tracks')
-def saved_tracks(sp: tk.Spotify, sample: int = -1, amount: int = -1, randomize: bool = True, top_down: bool = True, artist: tk.model.Artist = None) -> list[tk.model.Track]:
+def saved_tracks(sp: tk.Spotify, sample: int = -1, amount: int = -1, artist: tk.model.Artist = None) -> list[tk.model.Track]:
+    """
+    Saved tracks
+
+    amount (int) - Amount to get. If -1 it does all
+    sample (int) - Random sample to get. If -1 it does all
+    artist (string) - Filter artist. This is not required.
+    """
     tracks = spotify.get_saved_tracks(sp)
-    if artist is not None:
+    if artist:
         tracks = list(filter(lambda t: artist.name.lower() in [a.name.lower() for a in t.artists], tracks))
-    if sample > 0:
-        if sample < len(tracks):
-            if top_down:
-                tracks = tracks[:sample]
-            else:
-                tracks = tracks[-sample:]
-    if amount < 0:
-        return tracks
-    if randomize:
-        random.shuffle(tracks)
-    if amount < len(tracks):
-        if top_down:
-            tracks = tracks[:amount]
-        else:
-            tracks = tracks[-amount]
+    if 0 < amount < len(tracks):
+        tracks = tracks[:amount]
+    if 0 < sample < amount:
+        tracks = random.sample(tracks, sample)
     return tracks
 
 
 @instruction('top_tracks')
 def top_tracks(sp: tk.Spotify, amount: int = 20, term: str = 'short') -> list[tk.model.Track]:
+    """
+    Gets users top tracks
+
+    amount (int) - Amount of tracks to get
+    term [short/medium/long] - Time frame
+    """
     return sp.current_user_top_tracks(limit=amount, time_range='{0}_term'.format(term)).items
 
 
 def top_artists(sp: tk.Spotify, instruction: Instruction = None, term: str = 'short', limit: int = 10) -> list[tk.model.Track]:
+    """
+    Gets a users top artists
+
+    instruction (dict) - Instruction to run for each artist
+    limit - Amount of artists to get
+    term [short/medium/long] - Time frame
+    """
     results = sp.current_user_top_artists(time_range='{0}_term'.format(term), limit=limit).items
     songs = []
     for artist in results:

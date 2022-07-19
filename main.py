@@ -15,16 +15,22 @@ def get_args():
                         help='Prevents playlists from being modified')
     parser.add_argument('-p', '--playlist', required=False,
                         help='Generate a specific playlist')
+    parser.add_argument('--show-docs', required=False, action='store_true',
+                        help='Prints out all instructions and modifiers')
     if len(sys.argv) <= 1:
         parser.error('No arguments provided.')
     args = parser.parse_args()
-    if not args.playlist and not args.all:
+    if not args.playlist and not args.all and not args.show_docs:
         parser.error('You have to either specify a playlist or all.')
     return args
 
 
 def main():
     args = get_args()
+
+    if args.show_docs:
+        generator.show_all_help()
+        return
 
     logging.basicConfig(
         level='INFO',
