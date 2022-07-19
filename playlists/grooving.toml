@@ -1,7 +1,10 @@
-# Name of the track
-name = "Grooving"
-daily = true
 clear_duplicates = true
+region = 'US'
+
+
+[upload]
+    name = "Grooving"
+
 
 [[instructions]]
     type = "playlist_tracks"

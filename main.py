@@ -8,12 +8,7 @@ import generator.modifier as modifier
 
 def set_playlist(sp: tk.Spotify, file, manager):
     playlist = manager.load_playlist(file)
-    if not playlist.get('daily', True):
-        return
-
     songs = playlist.get_songs(sp)
-    playlist_id = spotify.get_or_create_playlist(sp, playlist['name'])
-    spotify.replace_all_playlist(sp, playlist_id, songs)
     print('Done with ' + str(len(songs)) + ' songs')
 
 

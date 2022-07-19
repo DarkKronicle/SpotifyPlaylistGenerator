@@ -4,39 +4,47 @@ import pathlib
 
 
 _modifiers = {}
+_sort = {}
 
 
-def modifier(name: str):
+def modifier(name: str, sort: int = 0):
 
     def decorator(func):
 
         _modifiers[name] = func
+        _sort[name] = sort
 
         @wraps(func)
-        def wrapper(songs, *args, **kwargs):
-            return func(songs, *args, **kwargs)
+        def wrapper(sp, songs, *args, **kwargs):
+            return func(sp, songs, *args, **kwargs)
 
         return wrapper
 
     return decorator
 
 
-def run_modifiers(songs: list, other_parameters: dict):
-    for key, val in other_parameters.items():
-        mod = _modifiers.get(key, None)
-        if mod is None:
-            print('No modifier named ' + key)
-            return songs
+def run_modifiers(sp, songs: list, other_parameters: dict):
+    """
+    Run modifiers on songs
+    :param songs: List of songs to modify
+    :param other_parameters: Dictionary containing modifier names as keys
+    :return:
+    """
+    for key, _ in {k: v for k, v in sorted(_sort.items(), key=lambda item: item[1])}.items():
+        val = other_parameters.get(key, None)
+        if val is None:
+            continue
+        mod = _modifiers.get(key)
         if isinstance(val, dict):
-            songs = mod(songs, **val)
+            songs = mod(sp, songs, **val)
         else:
-            songs = mod(songs, val)
+            songs = mod(sp, songs, val)
     return songs
 
 
 def setup():
     """
-    Loads in all the instructions
+    Loads in all the modifiers
     :return:
     """
     for file in list(pathlib.Path('generator/modifier').glob('**/*.py')):

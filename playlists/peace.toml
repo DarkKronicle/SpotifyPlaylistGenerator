@@ -1,6 +1,9 @@
-name = "Peace"
-daily = true
 clear_duplicates = true
+region = 'US'
+
+[upload]
+    name = "Peace"
+
 
 [[instructions]]
     type = "playlist_tracks"

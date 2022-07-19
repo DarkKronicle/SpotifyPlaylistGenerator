@@ -10,12 +10,10 @@ class Playlist:
     def get_songs(self, sp):
         songs = []
         data = dict(self.raw_data)
-        data.pop('name')
-        data.pop('daily')
-        for i in data.pop('instructions'):
+        for i in data['instructions']:
             songs.extend(instruction.run(sp, i))
         # Run modifiers like clear duplicates and what not
-        songs = modifier.run_modifiers(songs, data)
+        songs = modifier.run_modifiers(sp, songs, data)
         return songs
 
     def __getitem__(self, item):
