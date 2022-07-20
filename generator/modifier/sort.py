@@ -60,20 +60,21 @@ def traveling(pairs, **kwargs):
     data = np.array(features)
 
     for i, col in enumerate(attributes):
-        if col in ('loudness', 'tempo'):
-            minimum = data[:, i].min()
-            data[:, i] = (data[:, i] - minimum) / (data[:, i].max() - minimum)
+        minimum = data[:, i].min()
+        data[:, i] = (data[:, i] - minimum) / (data[:, i].max() - minimum)
 
     pca = PCA(n_components=2)
     data = pca.fit_transform(data)
 
     distances = squareform(pdist(data))
     route = two_opt(distances, tolerance=kwargs.get('tolerance', 0))
+
     route_dist = distances[route[1:], route[:-1]]
     worst = np.argmax(route_dist)
     new_route = np.concatenate((route[worst + 1:], route[1:worst + 1]))
 
     generator.logger.info('Done in {0} seconds'.format((math.ceil(time.time() * 1000) - now) / 1000))
+
     # Reorder tracks
     return [songs[i] for i in new_route]
 

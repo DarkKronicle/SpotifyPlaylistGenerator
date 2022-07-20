@@ -29,7 +29,13 @@ explicit = false
     type = "recommendations"
     artists = ["jizue", "insaneintherainmusic"]
 
-    tracks = { type = "saved_tracks", amount = 1, artist = "jizue" }
+    max_speechiness = 0.5
+    limit = 30
+    max_energy = 0.7
+
+[[instructions]]
+    type = "recommendations"
+    artists = ["GameChops"]
 
     max_speechiness = 0.5
     limit = 30
