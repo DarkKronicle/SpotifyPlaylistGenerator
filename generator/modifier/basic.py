@@ -1,6 +1,7 @@
 import generator
 from . import *
 import generator.spotify as spotify
+import tekore as tk
 
 
 @modifier('clear_duplicates')
@@ -34,6 +35,42 @@ def upload(sp, songs, name: str = None):
     playlist_id = spotify.get_or_create_playlist(sp, name)
     spotify.replace_all_playlist(sp, playlist_id, songs)
     return songs
+
+
+@modifier('remove_artists')
+def remove_artist(sp, songs, artist: list[str]):
+    """
+    Remove artists
+
+    artist (list) - List of artists
+    """
+    artists = generator.instruction._parse_var(sp, list[tk.model.Artist], artist)
+    new_songs = []
+    for song in songs:
+        if all(
+                [a.name != art.name for art in artists for a in song.artists]
+        ):
+            new_songs.append(song)
+    return new_songs
+
+
+@modifier('remove_from_playlist')
+def remove_from_playlist(sp, songs, playlist: str):
+    """
+    Remove songs from playlist
+
+    playlist (str) - Playlist
+    """
+    playlist = generator.instruction._parse_var(sp, tk.model.Playlist, playlist)
+    tracks = spotify.get_playlist_tracks(sp, playlist)
+    new_songs = []
+    for song in songs:
+        if all(
+                [s.name != song.name for s in tracks]
+        ):
+            new_songs.append(song)
+    return new_songs
+
 
 
 @modifier('region')

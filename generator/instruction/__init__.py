@@ -144,23 +144,23 @@ def _parse_other(sp, val, target):
     return val
 
 
-def _parse_var(sp, param, val):
+def _parse_var(sp, target, val):
     """
     Parse a variable of any type
     :param sp: Tekore Spotify client
-    :param param: The parameter within the function
+    :param target: The target type
     :param val: The parameter's value
     :return: Value converted to parameters target type (if it can find it)
     """
     if isinstance(val, list):
-        return _parse_list(sp, val, param.annotation)
+        return _parse_list(sp, val, target)
     if isinstance(val, dict):
-        if param.annotation == Instruction:
+        if target == Instruction:
             kwargs = val['type']
             instruct = _instructions[kwargs.pop('type')]
             return instruct, kwargs
-        return _parse_dict(sp, val, param.annotation)
-    return _parse_other(sp, val, param.annotation)
+        return _parse_dict(sp, val, target)
+    return _parse_other(sp, val, target)
 
 
 def _parse_func(sp, signature: inspect.Signature, *args, **kwargs):
@@ -188,7 +188,7 @@ def _parse_func(sp, signature: inspect.Signature, *args, **kwargs):
                 arguments[name] = v
         else:
             # Parse the variable into the correct type
-            arguments[param.name] = _parse_var(sp, param, val)
+            arguments[param.name] = _parse_var(sp, param.annotation, val)
 
     # Just return the kwargs
     return (), arguments
