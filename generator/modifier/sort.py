@@ -68,7 +68,7 @@ def traveling(pairs, **kwargs):
     data = pca.fit_transform(data)
 
     distances = squareform(pdist(data))
-    route = two_opt(distances, tolerance=kwargs.get('tolerance', 0.01))
+    route = two_opt(distances, tolerance=kwargs.get('tolerance', 0))
     route_dist = distances[route[1:], route[:-1]]
     worst = np.argmax(route_dist)
     new_route = np.concatenate((route[worst + 1:], route[1:worst + 1]))
