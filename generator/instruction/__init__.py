@@ -50,12 +50,17 @@ def _map_parameters(signature: inspect.Signature, *args, **kwargs):
     """
     params = []
     param_vals = list(signature.parameters.values())
+    kwargs_copy = dict(kwargs)
     for i in range(len(args)):
         params.append((param_vals[i], args[i]))
     for i in range(len(args), len(param_vals)):
         param = param_vals[i]
-        if param.name in kwargs:
-            params.append((param, kwargs[param.name]))
+        if param.kind == inspect.Parameter.VAR_KEYWORD:
+            # Var keyword will always be last so kwargs_copy will be depleted
+            # kwargs is not stored as a name in kwargs, just other parameters
+            params.append((param, kwargs_copy,))
+        elif param.name in kwargs_copy:
+            params.append((param, kwargs_copy.pop(param.name),))
         else:
             params.append((param, param.default))
     return params
@@ -268,15 +273,15 @@ def run(sp, val: dict):
     return i.run(sp, **val)
 
 
-def run_instruction(name, sp, **kwargs):
+def run_instruction(instruction_name, sp, **kwargs):
     """
     Runs an instruction based off of it's name
-    :param name: Name of the instruction
+    :param instruction_name: Name of the instruction
     :param sp: Tekore Spotify client
     :param kwargs: All the data that should be passed into run. This should be from TOML (so primitives)
     :return: The result of the ran instruction
     """
-    return _instructions[name].run(sp, **kwargs)
+    return _instructions[instruction_name].run(sp, **kwargs)
 
 
 def setup():

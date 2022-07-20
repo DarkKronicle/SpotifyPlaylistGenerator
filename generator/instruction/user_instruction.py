@@ -1,6 +1,7 @@
 from . import *
 import random
 import generator.spotify as spotify
+import generator
 
 
 @instruction('saved_tracks')
@@ -19,6 +20,8 @@ def saved_tracks(sp: tk.Spotify, sample: int = -1, amount: int = -1, artist: tk.
         tracks = tracks[:amount]
     if 0 < sample < amount:
         tracks = random.sample(tracks, sample)
+    if generator.verbose:
+        generator.logger.info('Fetched {0} songs saved songs'.format(len(tracks)))
     return tracks
 
 
@@ -30,7 +33,10 @@ def top_tracks(sp: tk.Spotify, amount: int = 20, term: str = 'short') -> list[tk
     amount (int) - Amount of tracks to get
     term [short/medium/long] - Time frame
     """
-    return sp.current_user_top_tracks(limit=amount, time_range='{0}_term'.format(term)).items
+    top = sp.current_user_top_tracks(limit=amount, time_range='{0}_term'.format(term)).items
+    if generator.verbose:
+        generator.logger.info('Fetched {0} top tracks in {1} term'.format(len(top), term))
+    return top
 
 
 def top_artists(sp: tk.Spotify, instruction: Instruction = None, term: str = 'short', limit: int = 10) -> list[tk.model.Track]:
@@ -47,4 +53,6 @@ def top_artists(sp: tk.Spotify, instruction: Instruction = None, term: str = 'sh
         kwargs = instruction[1]
         kwargs['artist'] = artist
         songs.extend(instruction[0].run(sp, **kwargs))
+    if generator.verbose:
+        generator.logger.info('Fetched {0} top artists and then {1} songs'.format(len(results), len(songs)))
     return songs

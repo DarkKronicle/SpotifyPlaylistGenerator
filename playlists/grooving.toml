@@ -1,5 +1,6 @@
 clear_duplicates = true
 region = 'US'
+explicit = false
 
 [upload]
     name = "Grooving"
@@ -9,50 +10,24 @@ region = 'US'
     name = "Saved: Bops"
 
 [[instructions]]
-    type = "recommendations"
-    artists = ["SANOVA"]
+    type = "generate"
+    tracks = {type = "playlist_tracks", name = "Saved: Bops"}
+    amount = 50
 
-    tracks = { type = "saved_tracks", amount = 1, artist = "SANOVA" }
+[[instructions]]
+    type = "recommendations"
+    artists = ["fox capture plan", "PRIMITIVE ART ORCHESTRA", "SANOVA"]
 
     max_speechiness = 0.3
-    limit = 30
+    limit = 70
     max_energy = 0.7
 
 [[instructions]]
     type = "recommendations"
-    artists = ["fox capture plan"]
-
-    tracks = { type = "saved_tracks", amount = 1, artist = "fox capture plan" }
-
-    max_speechiness = 0.3
-    limit = 30
-    max_energy = 0.7
-
-[[instructions]]
-    type = "recommendations"
-    artists = ["PRIMITIVE ART ORCHESTRA"]
-
-    tracks = { type = "saved_tracks", amount = 1, artist = "PRIMITIVE ART ORCHESTRA" }
-
-    max_speechiness = 0.3
-    limit = 15
-    max_energy = 0.7
-
-[[instructions]]
-    type = "recommendations"
-    artists = ["jizue"]
+    artists = ["jizue", "insaneintherainmusic"]
 
     tracks = { type = "saved_tracks", amount = 1, artist = "jizue" }
 
     max_speechiness = 0.5
-    limit = 15
+    limit = 30
     max_energy = 0.7
-
-[[instructions]]
-    type = "recommendations"
-    artists = ["Siena Wind Orchestra"]
-
-    max_speechiness = 0.5
-    limit = 15
-    max_energy = 0.7
-    min_energy = 0.4

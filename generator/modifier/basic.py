@@ -19,6 +19,8 @@ def clear_duplicates(sp, songs, active: bool):
         if track.name not in names:
             names.append(track.name)
             new_songs.append(track)
+    if generator.verbose:
+        generator.logger.info('Removed {0} duplicates'.format(len(songs) - len(new_songs)))
     return new_songs
 
 
@@ -32,8 +34,10 @@ def upload(sp, songs, name: str = None):
     if generator.prevent_uploading:
         generator.logger.info('Uploading songs for ' + name + ' was skipped because prevent_uploading is on')
         return songs
-    playlist_id = spotify.get_or_create_playlist(sp, name)
-    spotify.replace_all_playlist(sp, playlist_id, songs)
+    playlist = spotify.get_or_create_playlist(sp, name)
+    spotify.replace_all_playlist(sp, playlist, songs)
+    if generator.verbose:
+        generator.logger.info('Uploaded {0} songs to {1} (id {2})'.format(len(songs), playlist.name, playlist.id))
     return songs
 
 
@@ -51,6 +55,8 @@ def remove_artist(sp, songs, artist: list[str]):
                 [a.name != art.name for art in artists for a in song.artists]
         ):
             new_songs.append(song)
+    if generator.verbose:
+        generator.logger.info('Removed {0} songs from artists {1}'.format(len(songs) - len(new_songs), [a.name for a in artists]))
     return new_songs
 
 
@@ -69,8 +75,9 @@ def remove_from_playlist(sp, songs, playlist: str):
                 [s.name != song.name for s in tracks]
         ):
             new_songs.append(song)
+    if generator.verbose:
+        generator.logger.info('Removed {0} songs from playlist {1} (id {2})'.format(len(songs) - len(new_songs), playlist.name, playlist.id))
     return new_songs
-
 
 
 @modifier('region')
@@ -95,4 +102,20 @@ def allowed_region(sp, songs, region: str = 'US'):
             continue
         if region in track.available_markets:
             new_songs.append(track)
+    if generator.verbose:
+        generator.logger.info('Removed {0} songs that are not allowed in region {1}'.format(len(songs) - len(new_songs), region))
     return new_songs
+
+
+@modifier('explicit_filter')
+def explicit_filter(sp, songs, explicit: bool = False):
+    new_songs = []
+    for track in songs:
+        if track.explicit == explicit:
+            new_songs.append(track)
+
+    if generator.verbose:
+        generator.logger.info(
+            "Removed {0} songs that didn't match filter explicit = {1}".format(len(songs) - len(new_songs), explicit))
+    return new_songs
+

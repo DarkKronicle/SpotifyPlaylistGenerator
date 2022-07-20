@@ -17,6 +17,8 @@ def get_args():
                         help='Generate a specific playlist')
     parser.add_argument('--show-docs', required=False, action='store_true',
                         help='Prints out all instructions and modifiers')
+    parser.add_argument('-v', '--verbose', required=False, action='store_true',
+                        help='Log more information on what everything does')
     if len(sys.argv) <= 1:
         parser.error('No arguments provided.')
     args = parser.parse_args()
@@ -31,6 +33,9 @@ def main():
     if args.show_docs:
         generator.show_all_help()
         return
+
+    if args.verbose:
+        generator.verbose = True
 
     logging.basicConfig(
         level='INFO',

@@ -22,6 +22,7 @@ logger = logging.getLogger('generator')
 
 prevent_uploading = False
 list_songs = False
+verbose = False
 
 
 def setup(sp):

@@ -1,6 +1,7 @@
 from functools import wraps
 import importlib
 import pathlib
+import generator
 
 
 _modifiers = {}
@@ -36,6 +37,8 @@ def run_modifiers(sp, songs: list, other_parameters: dict):
         val = other_parameters.get(key, None)
         if val is None:
             continue
+        if generator.verbose:
+            generator.logger.info('Running modifier {0}'.format(key))
         mod = _modifiers.get(key)
         if isinstance(val, dict):
             songs = mod(sp, songs, **val)

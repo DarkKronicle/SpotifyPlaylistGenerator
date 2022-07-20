@@ -1,5 +1,6 @@
 import random
 from . import *
+import generator
 
 
 @instruction('artist_tracks')
@@ -15,8 +16,12 @@ def artist_tracks(sp, artist: tk.model.Artist = None, fetch: int = 50, select: i
     if len(tracks) > fetch:
         tracks = tracks[:fetch]
     if fetch == select:
+        if generator.verbose:
+            generator.logger.info('Fetched {0} songs from artist {1}'.format(len(tracks), artist.name))
         return tracks
     tracks = random.sample(tracks, select)
+    if generator.verbose:
+        generator.logger.info('Fetched {0} songs from artist {1}'.format(len(tracks), artist.name))
     return tracks
 
 
@@ -28,6 +33,8 @@ def artist_top(sp: tk.Spotify, artist: tk.model.Artist = None, amount: int = 10)
     artist (string) - Arist
     amount (int) - Amount of songs to get. Maximum is 10
     """
+    if generator.verbose:
+        generator.logger.info('Fetched {0} top songs from artist {1}'.format(amount, artist.name))
     return sp.artist_top_tracks(artist, amount=amount)
 
 
@@ -48,4 +55,6 @@ def related_artists(sp: tk.Spotify, artist: tk.model.Artist = None, instruction:
         kwargs = instruction[1]
         kwargs['artist'] = artist
         songs.extend(instruction[0].run(sp, **kwargs))
+    if generator.verbose:
+        generator.logger.info('Fetched {0} similar from artist {1} and collected {2} songs'.format(len(related), artist.name, len(songs)))
     return songs

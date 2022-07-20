@@ -1,5 +1,6 @@
 from . import *
 import random
+import generator
 
 
 @instruction('search')
@@ -15,4 +16,6 @@ def search(sp: tk.Spotify, search: str, limit: int = 50, sample: int = -1, offse
     tracks = paging.items
     if 0 < sample < limit:
         tracks = random.sample(tracks, sample)
+    if generator.verbose:
+        generator.logger.info('Searched {0} songs with query "{1}"'.format(len(tracks), search))
     return tracks
