@@ -2,6 +2,9 @@ clear_duplicates = true
 region = 'US'
 explicit = false
 
+[audio_sort]
+    method = 'traveling'
+
 [upload]
     name = "Grooving"
 
