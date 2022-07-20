@@ -77,5 +77,5 @@ def get_or_create_playlist(sp, name):
     for p in playlists:
         if p.name.lower() == name.lower():
             return p
-    return sp.playlist_create(sp.current_user.id)
+    return sp.playlist_create(sp.current_user().id, name)
 
