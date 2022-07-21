@@ -6,6 +6,8 @@ from sklearn.decomposition import PCA
 import generator
 from scipy.spatial.distance import pdist, squareform
 import time
+from itertools import zip_longest
+import random
 
 
 def two_opt(distances: np.ndarray, tolerance: float = 0) -> np.ndarray:
@@ -36,25 +38,9 @@ def two_opt(distances: np.ndarray, tolerance: float = 0) -> np.ndarray:
     return current_route
 
 
-def traveling(pairs, **kwargs):
-    generator.logger.info('Starting traveling salesman... this may take a minute')
+def _traveling_two(pairs, attributes, **kwargs):
     now = math.ceil(time.time() * 1000)
-    # Code by https://dev.to/felixhilden/smart-playlist-shuffle-using-travelling-salesman-58i1 (author of Tekore)
-    attributes = kwargs.get('attributes', ['acousticness', 'danceability', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'tempo', 'valence'])
-    if len(attributes) == 1:
-        # Create a loop since it's only 1d
-        pairs = sorted(pairs, key=lambda t: getattr(t[1], attributes[0]))
-        songs = list(list(zip(*pairs))[0])
-        new_songs = []
-        temp = list(songs[::2])
-        for s in temp:
-            songs.remove(s)
-            new_songs.append(s)
-        songs.reverse()
-        for s in songs:
-            new_songs.append(s)
-        return new_songs
-
+    generator.logger.info('Starting traveling salesman... this may take a minute')
     songs, analysis = list(zip(*pairs))
     features = [tuple(getattr(a, attr) for attr in attributes) for a in analysis]
     data = np.array(features)
@@ -76,7 +62,39 @@ def traveling(pairs, **kwargs):
     generator.logger.info('Done in {0} seconds'.format((math.ceil(time.time() * 1000) - now) / 1000))
 
     # Reorder tracks
-    return [songs[i] for i in new_route]
+    return [(songs[i], analysis[i]) for i in new_route]
+
+
+def _traveling_one(pairs, attribute, **kwargs):
+    # Create a loop since it's only 1d
+    pairs = sorted(pairs, key=lambda t: getattr(t[1], attribute))
+    return pairs[::2] + list(reversed(pairs[1::2]))
+
+
+def _traveling_impl(pairs, attributes, **kwargs):
+    if len(attributes) == 1:
+        return _traveling_one(pairs, attributes[0], **kwargs)
+    return _traveling_two(pairs, attributes, **kwargs)
+
+
+def traveling(pairs, **kwargs):
+    # Code by https://dev.to/felixhilden/smart-playlist-shuffle-using-travelling-salesman-58i1 (author of Tekore)
+    attributes = kwargs.get('attributes', ['acousticness', 'danceability', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'tempo', 'valence'])
+    new_pairs = _traveling_impl(pairs, attributes, **kwargs)
+    chunk_size = kwargs.get('chunks', -1)
+    if chunk_size > 0:
+        pairs_chunked = []
+        groups = list(zip_longest(*[iter(new_pairs)] * chunk_size))
+        generator.logger.info('Generating {0} groups'.format(len(groups)))
+        for g in groups:
+            g = list(filter(lambda p: p is not None, g))
+            pairs_chunked.extend(_traveling_impl(g, attributes, **kwargs))
+        new_pairs = pairs_chunked
+
+    if kwargs.get('random_offset', True):
+        new_pairs = list(np.roll(np.array(new_pairs), random.randint(0, len(new_pairs))))
+
+    return [p[0] for p in new_pairs]
 
 
 @modifier('audio_sort', sort=3)

@@ -6,6 +6,8 @@ remove_artists = ['Tracy Island', 'melodysheep']
 
 [audio_sort]
     method = 'traveling'
+    chunks = 25
+    random_offset = true
 
 [upload]
     name = 'My Current Bops with Spice'

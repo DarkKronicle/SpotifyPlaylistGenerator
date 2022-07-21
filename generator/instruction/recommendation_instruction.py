@@ -3,6 +3,7 @@ import math
 from . import *
 import random
 import generator
+from generator.modifier import sort
 
 
 @instruction('recommendations')
@@ -45,6 +46,9 @@ def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount: int 
     songs = []
     total = len(tracks)
     iters = math.ceil(len(tracks) / 5)
+    analysis = sp.tracks_audio_features([t.id for t in tracks])
+    pair = [(tracks[i], analysis[i]) for i in range(len(tracks))]
+    tracks = sort.traveling(pair)
     if random_sample:
         random.shuffle(tracks)
     for i in range(iters):

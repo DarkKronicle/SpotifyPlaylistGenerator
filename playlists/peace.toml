@@ -4,6 +4,8 @@ explicit = false
 
 [audio_sort]
     method = 'traveling'
+    chunks = 25
+    random_offset = true
 
 [upload]
     name = "Peace"

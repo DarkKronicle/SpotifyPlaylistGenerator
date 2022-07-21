@@ -2,6 +2,7 @@ import generator.instruction as instruction
 import generator.modifier as modifier
 import generator.spotify as spotify
 import generator.config as config
+import generator.modifier.sort as sort
 import tekore as tk
 import logging
 import pathlib
@@ -39,6 +40,15 @@ def get_default_token(manager: config.ConfigManager):
     tk.user_refresh_var = manager['saved_token']
 
     return tk.request_client_token(tk.client_id_var, tk.client_secret_var)
+
+
+def sort_playlist(sp, playlist):
+    tracks = spotify.get_playlist_tracks(sp, playlist)
+
+    analysis = sp.tracks_audio_features([t.id for t in tracks])
+    pair = [(tracks[i], analysis[i]) for i in range(len(tracks))]
+    tracks = sort.traveling(pair)
+    spotify.replace_all_playlist(sp, playlist, tracks)
 
 
 def load_playlist(file):
