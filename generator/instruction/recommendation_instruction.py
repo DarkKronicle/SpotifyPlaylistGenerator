@@ -54,7 +54,7 @@ def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount: int 
     for i in range(iters):
         cut = min(5, len(tracks))
         lim = math.floor(amount / iters) if iters == i + 1 else math.ceil(amount / iters)
-        songs.extend(sp.recommendations(limit=lim, track_ids=[t.id for t in tracks[:cut]]).tracks)
+        songs.extend(sp.recommendations(limit=lim, track_ids=[t.id for t in tracks[:cut]], **attributes).tracks)
         tracks = tracks[cut:]
     if generator.verbose:
         generator.logger.info('Generated {0} tracks from {1} tracks with {2} requests'.format(len(songs), total, iters))

@@ -19,6 +19,8 @@ def get_args():
                         help='Prints out all instructions and modifiers')
     parser.add_argument('-v', '--verbose', required=False, action='store_true',
                         help='Log more information on what everything does')
+    parser.add_argument('--prompt', required=False, action='store_true',
+                        help='Prompt for new token')
     if len(sys.argv) <= 1:
         parser.error('No arguments provided.')
     args = parser.parse_args()
@@ -49,7 +51,12 @@ def main():
     manager = generator.config.ConfigManager()
 
     sp = tk.Spotify(generator.get_default_token(manager), chunked_on=True)
-    sp.token = tk.refresh_user_token(tk.client_id_var, tk.client_secret_var, tk.user_refresh_var)
+    if args.prompt:
+        sp.token = tk.prompt_for_user_token(
+            tk.client_id_var, tk.client_secret_var, tk.redirect_uri_var, scope=generator.scopes,
+        )
+    else:
+        sp.token = tk.refresh_user_token(tk.client_id_var, tk.client_secret_var, tk.user_refresh_var)
 
     # We want to cache user stuff first
     generator.setup(sp)

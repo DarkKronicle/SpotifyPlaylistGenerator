@@ -4,15 +4,11 @@ region = 'US'
 # These are from my wake up playlist
 remove_artists = ['Tracy Island', 'melodysheep']
 
-sort = "artist"
+[audio_sort]
+    method = 'traveling'
 
 [upload]
     name = 'My Current Bops'
-
-[[instructions]]
-    type = "saved_tracks"
-    amount = 30
-    randomize = false
 
 [[instructions]]
     type = "top_tracks"

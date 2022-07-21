@@ -2,8 +2,17 @@ from generator.util.cache import cache
 import tekore as tk
 
 
+def get_id_from_uri(query: str):
+    if query.strip().startswith('spotify:'):
+        return query.split(':')[-1]
+    return None
+
+
 @cache()
 def get_track(sp: tk.Spotify, query: str):
+    uri = get_id_from_uri(query)
+    if uri is not None:
+        return sp.track(uri)
     return sp.search(query, limit=1)[0].items[0]
 
 
@@ -14,16 +23,25 @@ def get_saved_tracks(sp: tk.Spotify):
 
 @cache()
 def get_artist(sp: tk.Spotify, query: str):
+    uri = get_id_from_uri(query)
+    if uri is not None:
+        return sp.artist(uri)
     return sp.search(query, limit=1, types=('artist',))[0].items[0]
 
 
 @cache()
 def get_album(sp: tk.Spotify, query: str):
+    uri = get_id_from_uri(query)
+    if uri is not None:
+        return sp.album(uri)
     return sp.search(query, limit=1, types=('album',))[0].items[0]
 
 
 @cache()
 def get_playlist(sp: tk.Spotify, query: str):
+    uri = get_id_from_uri(query)
+    if uri is not None:
+        return sp.playlist(uri)
     return sp.search(query, limit=1, types=('playlist',))[0].items[0]
 
 

@@ -8,14 +8,7 @@ import logging
 import pathlib
 
 
-scopes = {
-    tk.scope.user_library_read,
-    tk.scope.user_top_read,
-    tk.scope.playlist_read_collaborative,
-    tk.scope.playlist_read_private,
-    tk.scope.playlist_modify_private,
-    tk.scope.playlist_modify_public,
-}
+scopes = tk.scope.read + tk.scope.write
 
 
 logger = logging.getLogger('generator')
