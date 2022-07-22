@@ -48,6 +48,7 @@ def _traveling_two(pairs, attributes, **kwargs):
     for i, col in enumerate(attributes):
         minimum = data[:, i].min()
         data[:, i] = (data[:, i] - minimum) / (data[:, i].max() - minimum)
+    data[np.isnan(data)] = 0
 
     pca = PCA(n_components=2)
     data = pca.fit_transform(data)
@@ -79,7 +80,7 @@ def _traveling_impl(pairs, attributes, **kwargs):
 
 def traveling(pairs, **kwargs):
     # Code by https://dev.to/felixhilden/smart-playlist-shuffle-using-travelling-salesman-58i1 (author of Tekore)
-    attributes = kwargs.get('attributes', ['acousticness', 'danceability', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'tempo', 'valence'])
+    attributes = kwargs.get('attributes', ['acousticness', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'valence'])
     new_pairs = _traveling_impl(pairs, attributes, **kwargs)
     chunk_size = kwargs.get('chunks', -1)
     if chunk_size > 0:
