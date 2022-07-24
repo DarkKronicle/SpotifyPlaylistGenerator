@@ -94,5 +94,5 @@ def traveling(pairs, return_tuple=False, **kwargs):
         new_pairs = list(np.roll(np.array(new_pairs), random.randint(0, len(new_pairs))))
 
     if return_tuple:
-        return [(p[0], p[1]) for p in new_pairs]
+        return new_pairs
     return [p[0] for p in new_pairs]

@@ -1,6 +1,5 @@
-from . import *
+from . import instruction
 import random
-import generator.spotify as spotify
 import generator
 import tekore as tk
 
@@ -14,7 +13,7 @@ def playlist_songs(sp: tk.Spotify, name: tk.model.Playlist, amount: int = -1, sa
     amount (int) - Amount to get from the playlist. If -1 it is all
     sample (int) - Random sample to get from the playlist. If -1 it is all.
     """
-    tracks = spotify.get_playlist_tracks(sp, name)
+    tracks = generator.spotify.get_playlist_tracks(sp, name)
     if len(tracks) > amount:
         tracks = tracks[:amount]
     if 0 < sample < len(tracks):

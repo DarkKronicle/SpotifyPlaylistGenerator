@@ -1,4 +1,4 @@
-from . import *
+from . import instruction
 import random
 import generator
 import tekore as tk

@@ -1,5 +1,5 @@
 import random
-from . import *
+from . import instruction, Instruction
 import generator
 import tekore as tk
 
@@ -13,7 +13,7 @@ def artist_tracks(sp, artist: tk.model.Artist = None, fetch: int = 50, select: i
     fetch (int) - Amount of songs to get
     select (int) - Random selection of the fetched songs
     """
-    tracks = spotify.get_artist_songs(sp, artist)
+    tracks = generator.spotify.get_artist_songs(sp, artist)
     if len(tracks) > fetch:
         tracks = tracks[:fetch]
     if fetch == select:

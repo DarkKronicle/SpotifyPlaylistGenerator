@@ -1,6 +1,6 @@
 import math
 
-from . import *
+from . import instruction
 import random
 import generator
 from generator import sort

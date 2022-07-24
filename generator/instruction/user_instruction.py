@@ -1,4 +1,4 @@
-from . import *
+from . import instruction, Instruction
 import random
 import generator.spotify as spotify
 import generator
