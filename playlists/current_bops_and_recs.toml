@@ -4,17 +4,20 @@ region = 'US'
 # These are from my wake up playlist
 remove_artists = ['Tracy Island', 'melodysheep']
 
-[audio_sort]
-    method = 'traveling'
-    chunks = 25
-    random_offset = true
+#[audio_sort]
+#    method = 'traveling'
+#    chunks = 25
+#    random_offset = true
+
+[sort_together]
+    tracks = {type = "playlist_tracks", name = 'My Current Bops'}
 
 [upload]
     name = 'My Current Bops with Spice'
 
-[[instructions]]
-    type = "playlist_tracks"
-    name = 'My Current Bops'
+#[[instructions]]
+#    type = "playlist_tracks"
+#    name = 'My Current Bops'
 
 [[instructions]]
     type = "generate"

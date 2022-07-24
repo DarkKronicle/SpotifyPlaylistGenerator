@@ -8,6 +8,7 @@ from scipy.spatial.distance import pdist, squareform
 import time
 from itertools import zip_longest
 import random
+from generator import instruction
 
 
 def two_opt(distances: np.ndarray, tolerance: float = 0) -> np.ndarray:
@@ -78,7 +79,7 @@ def _traveling_impl(pairs, attributes, **kwargs):
     return _traveling_two(pairs, attributes, **kwargs)
 
 
-def traveling(pairs, **kwargs):
+def traveling(pairs, return_tuple=False, **kwargs):
     # Code by https://dev.to/felixhilden/smart-playlist-shuffle-using-travelling-salesman-58i1 (author of Tekore)
     attributes = kwargs.get('attributes', ['acousticness', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'valence'])
     new_pairs = _traveling_impl(pairs, attributes, **kwargs)
@@ -95,6 +96,8 @@ def traveling(pairs, **kwargs):
     if kwargs.get('random_offset', True):
         new_pairs = list(np.roll(np.array(new_pairs), random.randint(0, len(new_pairs))))
 
+    if return_tuple:
+        return [p[0] for p in new_pairs], [p[1] for p in new_pairs]
     return [p[0] for p in new_pairs]
 
 
@@ -125,6 +128,52 @@ def audio_sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs)
     if method == 'traveling' or method == 'travelling':
         return traveling(pair, **kwargs)
     return songs
+
+
+def get_closest(song_pos, input_songs_pca):
+    closest_index = 0
+    closest_margin = -1
+    for i in range(len(input_songs_pca)):
+        s_pos = input_songs_pca[i]
+        dist = math.sqrt(math.pow(song_pos[0] - s_pos[0], 2) + math.pow(song_pos[1] - s_pos[1], 2))
+        if dist < closest_margin or closest_margin < 0:
+            closest_index = i
+            closest_margin = dist
+    return closest_index
+
+
+@modifier('sort_together')
+def advanced_sort(sp, songs, tracks, **kwargs):
+    attributes = kwargs.get('attributes',
+                            ['energy', 'valence'])
+
+    tracks = instruction.run(sp, tracks)
+    top_analysis = sp.tracks_audio_features([t.id for t in tracks])
+    analysis = sp.tracks_audio_features([t.id for t in songs])
+    tracks, top_analysis = traveling([(tracks[i], top_analysis[i]) for i in range(len(top_analysis))], return_tuple=True)
+
+    features = [tuple(getattr(a, attr) for attr in attributes) for a in top_analysis + analysis]
+    data = np.array(features)
+
+    pca = PCA(n_components=2)
+    data = pca.fit_transform(data)
+    top_pca = data[:len(tracks)]
+    song_pca = data[len(tracks):]
+
+    final = {}
+
+    for i in range(len(songs)):
+        closest = get_closest(song_pca[i], top_pca)
+        l = final.get(closest, None)
+        if l is None:
+            final[closest] = []
+            l = final.get(closest)
+        l.append(songs[i])
+
+    new_songs = []
+    for t_index, song_list in final.items():
+        new_songs.extend([tracks[t_index], *song_list])
+    return new_songs
 
 
 @modifier('sort', sort=3)
