@@ -3,7 +3,7 @@ import math
 from . import *
 import random
 import generator
-from generator.modifier import sort
+from generator import sort
 
 
 @instruction('recommendations')

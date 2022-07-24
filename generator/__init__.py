@@ -2,7 +2,7 @@ import generator.instruction as instruction
 import generator.modifier as modifier
 import generator.spotify as spotify
 import generator.config as config
-import generator.modifier.sort as sort
+import generator.modifier.sort as sort_mod
 import tekore as tk
 import logging
 import pathlib
@@ -40,7 +40,7 @@ def sort_playlist(sp, playlist):
 
     analysis = sp.tracks_audio_features([t.id for t in tracks])
     pair = [(tracks[i], analysis[i]) for i in range(len(tracks))]
-    tracks = sort.traveling(pair)
+    tracks = sort_mod.traveling(pair)
     spotify.replace_all_playlist(sp, playlist, tracks)
 
 
