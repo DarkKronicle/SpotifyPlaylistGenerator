@@ -1,5 +1,4 @@
-from . import util
-from util import *
+from .util import *
 from . import instruction
 from . import modifier
 from . import spotify

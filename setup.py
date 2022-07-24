@@ -5,7 +5,7 @@ requirements = [s.strip() for s in pathlib.Path('requirements.txt').read_text().
 
 setup(
     name='spotifygenerator',
-    packages=find_packages(include=['generator']),
+    packages=find_packages(),
     version='0.1.0',
     description='A library for generating Spotify playlists',
     author='DarkKronicle',
