@@ -6,16 +6,18 @@ import generator
 
 class Playlist:
 
-    def __init__(self, raw_data: dict, name):
+    def __init__(self, raw_data: dict, name, *, log=True):
         self.raw_data = raw_data
         self.name = name
+        self.log = log
 
     def get_songs(self, sp):
         songs = []
         data = dict(self.raw_data)
-        if generator.verbose:
+        if generator.verbose or not self.log:
             for pos, i in enumerate(data['instructions']):
-                generator.logger.info('Running instruction {0}/{1} {2}'.format(pos + 1, len(data['instructions']), i['type']))
+                if self.log:
+                    generator.logger.info('Running instruction {0}/{1} {2}'.format(pos + 1, len(data['instructions']), i['type']))
                 songs.extend(instruction.run(sp, i))
         else:
             pbar = tqdm(data['instructions'])

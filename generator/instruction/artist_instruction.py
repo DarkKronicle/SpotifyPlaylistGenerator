@@ -1,6 +1,7 @@
 import random
 from . import *
 import generator
+import tekore as tk
 
 
 @instruction('artist_tracks')

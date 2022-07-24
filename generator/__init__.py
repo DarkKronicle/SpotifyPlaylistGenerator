@@ -1,8 +1,8 @@
-import generator.instruction as instruction
-import generator.modifier as modifier
-import generator.spotify as spotify
-import generator.config as config
-import generator.modifier.sort as sort_mod
+from . import instruction
+from . import modifier
+from . import spotify
+from . import config
+from . import sort
 import tekore as tk
 import logging
 import pathlib
@@ -20,8 +20,6 @@ verbose = False
 
 
 def setup(sp):
-    instruction.setup()
-    modifier.setup()
     # We want user playlists to have priority in search
     spotify.get_user_playlists(sp)
 

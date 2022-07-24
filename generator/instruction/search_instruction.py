@@ -1,6 +1,7 @@
 from . import *
 import random
 import generator
+import tekore as tk
 
 
 @instruction('search')

@@ -4,6 +4,7 @@ from . import *
 import random
 import generator
 from generator import sort
+import tekore as tk
 
 
 @instruction('recommendations')

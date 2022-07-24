@@ -2,6 +2,7 @@ from . import *
 import random
 import generator.spotify as spotify
 import generator
+import tekore as tk
 
 
 @instruction('saved_tracks')

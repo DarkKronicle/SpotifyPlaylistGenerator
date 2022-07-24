@@ -2,7 +2,6 @@ from setuptools import find_packages, setup
 import pathlib
 
 requirements = [s.strip() for s in pathlib.Path('requirements.txt').read_text().split('\n')]
-print(requirements)
 
 setup(
     name='spotifygenerator',
