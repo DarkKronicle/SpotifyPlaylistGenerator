@@ -15,7 +15,7 @@ class Instruction:
     This is set up so that this can be referenced from within a dictionary containing primitives.
     """
 
-    def run(self, sp, **kwargs):
+    async def run(self, sp, **kwargs):
         """
         Run the instruction
         :param sp: Tekore Spotify client
@@ -74,7 +74,7 @@ def _list_of_type(arr, target):
     return all([isinstance(a, target) for a in arr])
 
 
-def _parse_list(sp, val: list, target):
+async def _parse_list(sp, val: list, target):
     """
     Parses a list into the desired list type
 
@@ -92,7 +92,7 @@ def _parse_list(sp, val: list, target):
         # If dict we need instructions
         vals = []
         for d in val:
-            vals.extend(_parse_dict(sp, d, typing.get_args(target)[0]))
+            vals.extend(await _parse_dict(sp, d, typing.get_args(target)[0]))
         return vals
 
     if not _list_of_type(val, str):
@@ -100,17 +100,17 @@ def _parse_list(sp, val: list, target):
 
     match typing.get_args(target)[0]:
         case tk.model.Track:
-            return [spotify.get_track(sp, query) for query in val]
+            return [await spotify.get_track(sp, query) for query in val]
         case tk.model.Playlist:
-            return [spotify.get_playlist(sp, query) for query in val]
+            return [await spotify.get_playlist(sp, query) for query in val]
         case tk.model.Album:
-            return [spotify.get_album(sp, query) for query in val]
+            return [await spotify.get_album(sp, query) for query in val]
         case tk.model.Artist:
-            return [spotify.get_artist(sp, query) for query in val]
+            return [await spotify.get_artist(sp, query) for query in val]
     return val
 
 
-def _parse_dict(sp, val: dict, target):
+async def _parse_dict(sp, val: dict, target):
     """
     Parses a dict into the desired target result
     :param sp: Tekore Spotify client
@@ -122,11 +122,11 @@ def _parse_dict(sp, val: dict, target):
     name = kwargs.pop('type')
     i = _instructions[name]
     if i.return_type() == target:
-        return run_instruction(name, sp, **kwargs)
+        return await run_instruction(name, sp, **kwargs)
     raise AssertionError('Instruction ' + str(name) + ' with type ' + str(i.return_type()) + ' is not correct for ' + str(target))
 
 
-def _parse_other(sp, val, target):
+async def _parse_other(sp, val, target):
     """
     Parse a single variable that isn't a dictionary or list
     :param sp: Tekore Spotify client
@@ -137,17 +137,17 @@ def _parse_other(sp, val, target):
     if isinstance(val, str):
         match target:
             case tk.model.Track:
-                return spotify.get_track(sp, val)
+                return await spotify.get_track(sp, val)
             case tk.model.Album:
-                return spotify.get_album(sp, val)
+                return await spotify.get_album(sp, val)
             case tk.model.Artist:
-                return spotify.get_artist(sp, val)
+                return await spotify.get_artist(sp, val)
             case tk.model.Playlist:
-                return spotify.get_playlist(sp, val)
+                return await spotify.get_playlist(sp, val)
     return val
 
 
-def _parse_var(sp, target, val):
+async def parse_var(sp, target, val):
     """
     Parse a variable of any type
     :param sp: Tekore Spotify client
@@ -156,17 +156,17 @@ def _parse_var(sp, target, val):
     :return: Value converted to parameters target type (if it can find it)
     """
     if isinstance(val, list):
-        return _parse_list(sp, val, target)
+        return await _parse_list(sp, val, target)
     if isinstance(val, dict):
         if target == Instruction:
             kwargs = val['type']
             instruct = _instructions[kwargs.pop('type')]
             return instruct, kwargs
-        return _parse_dict(sp, val, target)
-    return _parse_other(sp, val, target)
+        return await _parse_dict(sp, val, target)
+    return await _parse_other(sp, val, target)
 
 
-def _parse_func(sp, signature: inspect.Signature, *args, **kwargs):
+async def _parse_func(sp, signature: inspect.Signature, *args, **kwargs):
     """
     Parse an entire function into Spotify objects. This takes args/kwargs and returns modified ones
     :param sp: Tekore Spotify client
@@ -191,7 +191,7 @@ def _parse_func(sp, signature: inspect.Signature, *args, **kwargs):
                 arguments[name] = v
         else:
             # Parse the variable into the correct type
-            arguments[param.name] = _parse_var(sp, param.annotation, val)
+            arguments[param.name] = await parse_var(sp, param.annotation, val)
 
     # Just return the kwargs
     return (), arguments
@@ -231,10 +231,10 @@ def instruction(name: str):
         # Signature is important for getting argument types
         signature = inspect.signature(func)
 
-        def inner_run(sp, *args, **kwargs):
+        async def inner_run(sp, *args, **kwargs):
             # This wraps the function in the ability to be parsed by a dictionary
-            args, kwargs = _parse_func(sp, signature, *args, **kwargs)
-            return func(sp, *args, **kwargs)
+            args, kwargs = await _parse_func(sp, signature, *args, **kwargs)
+            return await func(sp, *args, **kwargs)
 
         def return_type():
             # This is used to check if an instruction is returning the right type for the parameter
@@ -248,16 +248,16 @@ def instruction(name: str):
         _help[name] = func.__doc__
 
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        async def wrapper(*args, **kwargs):
             # If called normally don't do anything, we really just wanted to wrap so we can convert arguments from dict
-            return func(args, kwargs)
+            return await func(args, kwargs)
 
         return wrapper
 
     return decorator
 
 
-def run(sp, val: dict):
+async def run(sp, val: dict):
     """
     Runs an instruction based off of a dictionary. Dictionary should contain `type` as the name and
     other arguments in key/pair. These are primitives and will automatically be converted when ran.
@@ -268,10 +268,10 @@ def run(sp, val: dict):
     # We pop this here because we don't want `type` to be an argument
     name = val.pop('type')
     i = _instructions[name]
-    return i.run(sp, **val)
+    return await i.run(sp, **val)
 
 
-def run_instruction(instruction_name, sp, **kwargs):
+async def run_instruction(instruction_name, sp, **kwargs):
     """
     Runs an instruction based off of it's name
     :param instruction_name: Name of the instruction
@@ -279,7 +279,7 @@ def run_instruction(instruction_name, sp, **kwargs):
     :param kwargs: All the data that should be passed into run. This should be from TOML (so primitives)
     :return: The result of the ran instruction
     """
-    return _instructions[instruction_name].run(sp, **kwargs)
+    return await _instructions[instruction_name].run(sp, **kwargs)
 
 
 def show_all_help():

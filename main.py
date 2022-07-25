@@ -5,6 +5,7 @@ import generator
 import argparse
 import sys
 import logging
+import asyncio
 
 
 def get_args():
@@ -29,6 +30,21 @@ def get_args():
     return args
 
 
+async def async_main(sp, args):
+    # We want to cache user stuff first
+    await generator.setup(sp)
+
+    if args.all:
+        for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
+            await generator.run_playlist_file(sp, str(playlist))
+
+    if args.playlist:
+        file = str(args.playlist)
+        if not file.startswith('playlists/'):
+            file = 'playlists/' + file
+        await generator.run_playlist_file(sp, file)
+
+
 def main():
     args = get_args()
 
@@ -50,7 +66,7 @@ def main():
 
     manager = generator.config.ConfigManager()
 
-    sp = tk.Spotify(generator.get_default_token(manager), chunked_on=True)
+    sp = tk.Spotify(generator.get_default_token(manager), chunked_on=True, asynchronous=True)
     if args.prompt:
         sp.token = tk.prompt_for_user_token(
             tk.client_id_var, tk.client_secret_var, tk.redirect_uri_var, scope=generator.scopes,
@@ -58,18 +74,7 @@ def main():
     else:
         sp.token = tk.refresh_user_token(tk.client_id_var, tk.client_secret_var, tk.user_refresh_var)
 
-    # We want to cache user stuff first
-    generator.setup(sp)
-
-    if args.all:
-        for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
-            generator.run_playlist_file(sp, str(playlist))
-
-    if args.playlist:
-        file = str(args.playlist)
-        if not file.startswith('playlists/'):
-            file = 'playlists/' + file
-        generator.run_playlist_file(sp, file)
+    asyncio.run(async_main(sp, args))
 
 
 if __name__ == '__main__':

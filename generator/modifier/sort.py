@@ -1,23 +1,17 @@
-import math
-
 from . import *
-import numpy as np
-from sklearn.decomposition import PCA
-import tekore as tk
 
-from generator import instruction
 from generator import sort
 
 
 @modifier('audio_sort', sort=3)
-def audio_sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs):
+async def audio_sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs):
     """
     Sorts a playlist, but using audio analysis (which is slower)
 
     method (str) - Method of sorting
     reverse (bool) - Reverse the output
     """
-    analysis = sp.tracks_audio_features([t.id for t in songs])
+    analysis = await sp.tracks_audio_features([t.id for t in songs])
     pair = [(songs[i], analysis[i]) for i in range(len(songs))]
     if method in ('tempo', 'energy', 'loudness', 'danceability', 'valence', 'speechiness', 'acousticness'):
         return [song[0] for song in sorted(pair, key=lambda s: getattr(s[1], method), reverse=reverse)]
@@ -27,7 +21,7 @@ def audio_sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs)
 
 
 @modifier('sort', sort=3)
-def sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs):
+async def sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs):
     """
     Sorts a playlist
 

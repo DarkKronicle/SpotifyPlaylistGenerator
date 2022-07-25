@@ -38,7 +38,8 @@ def two_opt(distances: np.ndarray, tolerance: float = 0) -> np.ndarray:
 
 def _traveling_two(pairs, attributes, **kwargs):
     now = math.ceil(time.time() * 1000)
-    generator.logger.info('Starting traveling salesman... this may take a minute')
+    if not generator.silent:
+        generator.logger.info('Starting traveling salesman... this may take a minute')
     songs, analysis = list(zip(*pairs))
     features = [tuple(getattr(a, attr) for attr in attributes) for a in analysis]
     data = np.array(features)
@@ -58,7 +59,8 @@ def _traveling_two(pairs, attributes, **kwargs):
     worst = np.argmax(route_dist)
     new_route = np.concatenate((route[worst + 1:], route[1:worst + 1]))
 
-    generator.logger.info('Done in {0} seconds'.format((math.ceil(time.time() * 1000) - now) / 1000))
+    if not generator.silent:
+        generator.logger.info('Done in {0} seconds'.format((math.ceil(time.time() * 1000) - now) / 1000))
 
     # Reorder tracks
     return [(songs[i], analysis[i]) for i in new_route]
@@ -78,13 +80,12 @@ def _traveling_impl(pairs, attributes, **kwargs):
 
 def traveling(pairs, return_tuple=False, **kwargs):
     # Code by https://dev.to/felixhilden/smart-playlist-shuffle-using-travelling-salesman-58i1 (author of Tekore)
-    attributes = kwargs.get('attributes', ['acousticness', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'valence'])
+    attributes = kwargs.pop('attributes', ['acousticness', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'valence'])
     new_pairs = _traveling_impl(pairs, attributes, **kwargs)
     chunk_size = kwargs.get('chunks', -1)
     if chunk_size > 0:
         pairs_chunked = []
         groups = list(zip_longest(*[iter(new_pairs)] * chunk_size))
-        generator.logger.info('Generating {0} groups'.format(len(groups)))
         for g in groups:
             g = list(filter(lambda p: p is not None, g))
             pairs_chunked.extend(_traveling_impl(g, attributes, **kwargs))

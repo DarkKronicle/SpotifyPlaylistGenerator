@@ -6,11 +6,11 @@ import numpy as np
 
 
 @modifier('similar', sort=-1)
-def similar_sort(sp, songs, tracks: dict, **kwargs):
-    tracks = instruction.run(sp, tracks)
-    top_analysis = sp.tracks_audio_features([t.id for t in tracks])
+async def similar_sort(sp, songs, tracks: dict, **kwargs):
+    tracks = await instruction.run(sp, tracks)
+    top_analysis = await sp.tracks_audio_features([t.id for t in tracks])
 
-    analysis = list(sp.tracks_audio_features([t.id for t in songs]))
+    analysis = list(await sp.tracks_audio_features([t.id for t in songs]))
 
     # Sort main one
     if len(tracks) < 50:

@@ -5,7 +5,7 @@ import tekore as tk
 
 
 @modifier('clear_duplicates')
-def clear_duplicates(sp, songs, active: bool):
+async def clear_duplicates(sp, songs, active: bool):
     """
     Clears duplicates
 
@@ -25,30 +25,31 @@ def clear_duplicates(sp, songs, active: bool):
 
 
 @modifier('upload', sort=5)
-def upload(sp, songs, name: str = None):
+async def upload(sp, songs, name: str = None):
     """
     Upload to Spotify under a specific name. This clears out the playlist and replaces ALL tracks.
 
     name (string) - Name of the playlist. It will be created if it does not exist.
     """
     if generator.prevent_uploading:
-        generator.logger.info('Uploading songs for ' + name + ' was skipped because prevent_uploading is on')
+        if not generator.silent:
+            generator.logger.info('Uploading songs for ' + name + ' was skipped because prevent_uploading is on')
         return songs
-    playlist = spotify.get_or_create_playlist(sp, name)
-    spotify.replace_all_playlist(sp, playlist, songs)
+    playlist = await spotify.get_or_create_playlist(sp, name)
+    await spotify.replace_all_playlist(sp, playlist, songs)
     if generator.verbose:
         generator.logger.info('Uploaded {0} songs to {1} (id {2})'.format(len(songs), playlist.name, playlist.id))
     return songs
 
 
 @modifier('remove_artists')
-def remove_artist(sp, songs, artist: list[str]):
+async def remove_artist(sp, songs, artist: list[str]):
     """
     Remove artists
 
     artist (list) - List of artists
     """
-    artists = generator.instruction._parse_var(sp, list[tk.model.Artist], artist)
+    artists = await generator.instruction.parse_var(sp, list[tk.model.Artist], artist)
     new_songs = []
     for song in songs:
         if all(
@@ -61,14 +62,14 @@ def remove_artist(sp, songs, artist: list[str]):
 
 
 @modifier('remove_from_playlist')
-def remove_from_playlist(sp, songs, playlist: str):
+async def remove_from_playlist(sp, songs, playlist: str):
     """
     Remove songs from playlist
 
     playlist (str) - Playlist
     """
-    playlist = generator.instruction._parse_var(sp, tk.model.Playlist, playlist)
-    tracks = spotify.get_playlist_tracks(sp, playlist)
+    playlist = await generator.instruction.parse_var(sp, tk.model.Playlist, playlist)
+    tracks = await spotify.get_playlist_tracks(sp, playlist)
     new_songs = []
     for song in songs:
         if all(
@@ -81,7 +82,7 @@ def remove_from_playlist(sp, songs, playlist: str):
 
 
 @modifier('region')
-def allowed_region(sp, songs, region: str = 'US'):
+async def allowed_region(sp, songs, region: str = 'US'):
     """
     Filters tracks to a specific region. This is useful if you only want songs that can play where you are.
 
@@ -108,7 +109,7 @@ def allowed_region(sp, songs, region: str = 'US'):
 
 
 @modifier('explicit_filter')
-def explicit_filter(sp, songs, explicit: bool = False):
+async def explicit_filter(sp, songs, explicit: bool = False):
     new_songs = []
     for track in songs:
         if track.explicit == explicit:

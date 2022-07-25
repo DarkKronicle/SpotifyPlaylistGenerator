@@ -1,4 +1,4 @@
-import pathlib
+import asyncio
 import tekore as tk
 import generator
 
@@ -25,6 +25,26 @@ def get_args():
     return parser.parse_args()
 
 
+async def async_main(sp, args):
+    # We want to cache user stuff first
+    await generator.setup(sp)
+
+    playlists = await spotify.get_user_playlists(sp)
+    play = spotify.get_playlist(sp, args.playlist)
+    if play is None:
+        generator.logger.warn('No playlist found with name ' + args.playlist)
+        return
+    if not args.export and play.owner.id != sp.current_user().id:
+        generator.logger.warn("To sort a playlist that isn't yours you have to provide the --export argument!")
+        return
+    kwargs = {}
+    if args.chunk:
+        kwargs['chunks'] = args.chunk
+    if args.random:
+        kwargs['random_offset'] = args.random
+    await generator.sort_playlist(sp, play)
+
+
 def main():
     args = get_args()
 
@@ -47,23 +67,7 @@ def main():
     else:
         sp.token = tk.refresh_user_token(tk.client_id_var, tk.client_secret_var, tk.user_refresh_var)
 
-    # We want to cache user stuff first
-    generator.setup(sp)
-
-    playlists = spotify.get_user_playlists(sp)
-    play = spotify.get_playlist(sp, args.playlist)
-    if play is None:
-        generator.logger.warn('No playlist found with name ' + args.playlist)
-        return
-    if not args.export and play.owner.id != sp.current_user().id:
-        generator.logger.warn("To sort a playlist that isn't yours you have to provide the --export argument!")
-        return
-    kwargs = {}
-    if args.chunk:
-        kwargs['chunks'] = args.chunk
-    if args.random:
-        kwargs['random_offset'] = args.random
-    generator.sort_playlist(sp, play)
+    asyncio.run(async_main(sp, args))
 
 
 if __name__ == '__main__':

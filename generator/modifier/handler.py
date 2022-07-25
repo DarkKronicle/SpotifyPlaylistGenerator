@@ -11,8 +11,8 @@ def modifier(name: str, sort: int = 0):
         _help[name] = func.__doc__
 
         @wraps(func)
-        def wrapper(sp, songs, *args, **kwargs):
-            return func(sp, songs, *args, **kwargs)
+        async def wrapper(sp, songs, *args, **kwargs):
+            return await func(sp, songs, *args, **kwargs)
 
         return wrapper
 
@@ -24,7 +24,7 @@ _sort = {}
 _help = {}
 
 
-def run_modifiers(sp, songs: list, other_parameters: dict):
+async def run_modifiers(sp, songs: list, other_parameters: dict):
     """
     Run modifiers on songs
     :param songs: List of songs to modify
@@ -39,9 +39,9 @@ def run_modifiers(sp, songs: list, other_parameters: dict):
             generator.logger.info('Running modifier {0}'.format(key))
         mod = _modifiers.get(key)
         if isinstance(val, dict):
-            songs = mod(sp, songs, **val)
+            songs = await mod(sp, songs, **val)
         else:
-            songs = mod(sp, songs, val)
+            songs = await mod(sp, songs, val)
     return songs
 
 

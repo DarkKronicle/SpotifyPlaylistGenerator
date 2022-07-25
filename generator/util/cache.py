@@ -8,6 +8,8 @@ Rapptz did in RoboDanny.
 Tutorial on how this stuff works: https://realpython.com/primer-on-python-decorators/#caching-return-values
 """
 import time
+import inspect
+import asyncio
 from functools import wraps
 
 
@@ -83,8 +85,12 @@ def cache():  # noqa: C901,WPS212,WPS231
             stored_value = internal_cache.get(key, None)
             if stored_value is None:
                 stored_value = func(*args, **kwargs)
+                if inspect.isawaitable(stored_value):
+                    return _wrap_and_store_coroutine(internal_cache, key, stored_value)
                 internal_cache[key] = stored_value  # noqa: WPS529
 
+            if asyncio.iscoroutinefunction(func):
+                return _wrap_new_coroutine(stored_value)
             return stored_value
 
         def _invalidate(*args, **kwargs):
