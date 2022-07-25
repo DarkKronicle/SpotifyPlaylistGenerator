@@ -6,6 +6,7 @@ explicit = false
     method = 'traveling'
     chunks = 25
     random_offset = true
+    attributes = ['energy', 'valence']
 
 [upload]
     name = "Peace"

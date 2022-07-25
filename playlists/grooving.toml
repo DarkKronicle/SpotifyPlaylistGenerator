@@ -4,8 +4,9 @@ explicit = false
 
 [audio_sort]
     method = 'traveling'
-    chunks = 25
+    chunks = 40
     random_offset = true
+    attributes = ['energy', 'valence']
 
 [upload]
     name = "Grooving"
