@@ -1,0 +1,14 @@
+[separate]
+    title = 'Mix {0}'
+    instruction = {type = "generate", amount=50, mix_same=true}
+    [separate.audio_sort]
+        method = 'traveling'
+        chunks = 25
+        random_offset = true
+        attributes = ['energy', 'valence', 'acousticness']
+
+
+[[instructions]]
+    type = "top_tracks"
+    term = 'short'
+    amount = 50

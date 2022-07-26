@@ -38,7 +38,7 @@ def two_opt(distances: np.ndarray, tolerance: float = 0) -> np.ndarray:
 
 def _traveling_two(pairs, attributes, **kwargs):
     now = math.ceil(time.time() * 1000)
-    if not generator.silent:
+    if generator.verbose:
         generator.logger.info('Starting traveling salesman... this may take a minute')
     songs, analysis = list(zip(*pairs))
     features = [tuple(getattr(a, attr) for attr in attributes) for a in analysis]
@@ -46,6 +46,9 @@ def _traveling_two(pairs, attributes, **kwargs):
 
     for i, col in enumerate(attributes):
         minimum = data[:, i].min()
+        if data[:, i].max() == minimum:
+            data[:, i] = 0
+            continue
         data[:, i] = (data[:, i] - minimum) / (data[:, i].max() - minimum)
     data[np.isnan(data)] = 0
 
@@ -59,7 +62,7 @@ def _traveling_two(pairs, attributes, **kwargs):
     worst = np.argmax(route_dist)
     new_route = np.concatenate((route[worst + 1:], route[1:worst + 1]))
 
-    if not generator.silent:
+    if generator.verbose:
         generator.logger.info('Done in {0} seconds'.format((math.ceil(time.time() * 1000) - now) / 1000))
 
     # Reorder tracks

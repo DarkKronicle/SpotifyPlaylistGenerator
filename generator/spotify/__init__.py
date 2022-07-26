@@ -101,5 +101,5 @@ async def get_or_create_playlist(sp, name):
     for p in playlists:
         if p.name.lower() == name.lower():
             return p
-    return await sp.playlist_create(sp.current_user().id, name)
+    return await sp.playlist_create((await sp.current_user()).id, name)
 

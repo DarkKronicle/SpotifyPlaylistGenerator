@@ -36,7 +36,7 @@ async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, a
 
 
 @instruction('generate')
-async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, **attributes) -> list[tk.model.Track]:
+async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, mix_same=False, **attributes) -> list[tk.model.Track]:
     """
     Generates many tracks from specified tracks. Can be used to generate a playlist from a playlist
 
@@ -53,6 +53,13 @@ async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount
         tracks = sort.traveling(pair)
     else:
         tracks = sort.traveling(pair, attributes=['valence'])
+
+    save_tracks = []
+    if mix_same:
+        target = math.ceil(math.sqrt(4 * len(tracks)) - 5)
+        if target >= 1:
+            save_tracks = random.sample(tracks, target)
+            amount = amount - len(save_tracks)
     if random_sample:
         random.shuffle(tracks)
     for i in range(iters):
@@ -62,5 +69,5 @@ async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount
         tracks = tracks[cut:]
     if generator.verbose:
         generator.logger.info('Generated {0} tracks from {1} tracks with {2} requests'.format(len(songs), total, iters))
-    return songs
+    return songs + save_tracks
 

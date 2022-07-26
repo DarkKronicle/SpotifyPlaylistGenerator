@@ -1,6 +1,10 @@
 from . import *
 
+import generator
 from generator import sort
+from generator.sort import group
+from generator import spotify
+from generator import instruction as inst
 
 
 @modifier('audio_sort', sort=3)
@@ -37,4 +41,30 @@ async def sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs)
     if method == 'artist':
         return sorted(songs, key=lambda s: (s.album.artists[0].name, s.album.name, s.name), reverse=reverse)
     return songs
+
+
+@modifier('separate')
+async def groups(sp, songs, instruction: dict, title: str = 'Mix {0}', n=-1, **modifiers):
+    analysis = await sp.tracks_audio_features([t.id for t in songs])
+    if n > 10:
+        n = 10
+    clusters = group.get_groups(songs, analysis, n=n)
+    if generator.prevent_uploading:
+        if not generator.silent:
+            generator.logger.info('Uploading songs for ' + title + ' was skipped because prevent_uploading is on')
+        return songs
+
+    for i, cluster in enumerate(clusters):
+        if i > 10:
+            generator.logger.info('Woah, way more than 10!')
+            return songs
+        cluster_songs = await inst.run(sp, dict(instruction), tracks=list(cluster[0]))
+        if sort is not None:
+            cluster_songs = await run_modifiers(sp, cluster_songs, modifiers)
+        playlist = await spotify.get_or_create_playlist(sp, title.format(i + 1))
+        await spotify.replace_all_playlist(sp, playlist, cluster_songs)
+        if generator.verbose:
+            generator.logger.info('Uploaded {0} songs to {1} (id {2})'.format(len(songs), playlist.name, playlist.id))
+    return songs
+
 

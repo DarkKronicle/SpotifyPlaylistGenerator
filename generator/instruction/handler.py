@@ -182,8 +182,9 @@ async def _parse_func(sp, signature: inspect.Signature, *args, **kwargs):
     mapped = _map_parameters(signature, *args, **kwargs)
     for param, val in mapped:
         # If it's empty means nothing was provided. (Typically like the spotify client)
-        if val == inspect.Parameter.empty:
-            continue
+        if not isinstance(val, list) and not isinstance(val, dict):
+            if val == inspect.Parameter.empty:
+                continue
         if param.kind == inspect.Parameter.VAR_KEYWORD:
             # This is kwarg within the kwargs.
             # We just need to map it to the raw value since kwargs can't have target type
@@ -257,7 +258,7 @@ def instruction(name: str):
     return decorator
 
 
-async def run(sp, val: dict):
+async def run(sp, val: dict, **kwargs):
     """
     Runs an instruction based off of a dictionary. Dictionary should contain `type` as the name and
     other arguments in key/pair. These are primitives and will automatically be converted when ran.
@@ -268,7 +269,7 @@ async def run(sp, val: dict):
     # We pop this here because we don't want `type` to be an argument
     name = val.pop('type')
     i = _instructions[name]
-    return await i.run(sp, **val)
+    return await i.run(sp, **val, **kwargs)
 
 
 async def run_instruction(instruction_name, sp, **kwargs):
