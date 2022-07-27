@@ -6,6 +6,7 @@ import argparse
 import sys
 import logging
 import asyncio
+import platform
 
 
 def get_args():
@@ -35,6 +36,7 @@ async def async_main(sp, args):
     await generator.setup(sp)
 
     if args.all:
+        collected = []
         for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
             await generator.run_playlist_file(sp, str(playlist))
 
@@ -74,6 +76,9 @@ def main():
     else:
         sp.token = tk.refresh_user_token(tk.client_id_var, tk.client_secret_var, tk.user_refresh_var)
 
+    if platform.system() == 'Windows':
+        # Windows be like
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(async_main(sp, args))
 
 

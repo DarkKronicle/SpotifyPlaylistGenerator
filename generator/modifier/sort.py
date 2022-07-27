@@ -49,10 +49,6 @@ async def groups(sp, songs, instruction: dict, title: str = 'Mix {0}', n=-1, **m
     if n > 10:
         n = 10
     clusters = group.get_groups(songs, analysis, n=n)
-    if generator.prevent_uploading:
-        if not generator.silent:
-            generator.logger.info('Uploading songs for ' + title + ' was skipped because prevent_uploading is on')
-        return songs
 
     for i, cluster in enumerate(clusters):
         if i > 10:
@@ -61,6 +57,11 @@ async def groups(sp, songs, instruction: dict, title: str = 'Mix {0}', n=-1, **m
         cluster_songs = await inst.run(sp, dict(instruction), tracks=list(cluster[0]))
         if sort is not None:
             cluster_songs = await run_modifiers(sp, cluster_songs, modifiers)
+        if generator.prevent_uploading:
+            if not generator.silent:
+                generator.logger.info(
+                    'Uploading songs for ' + title.format(i) + ' was skipped because prevent_uploading is on')
+            continue
         playlist = await spotify.get_or_create_playlist(sp, title.format(i + 1))
         await spotify.replace_all_playlist(sp, playlist, cluster_songs)
         if generator.verbose:

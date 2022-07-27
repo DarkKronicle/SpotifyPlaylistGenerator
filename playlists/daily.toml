@@ -12,3 +12,8 @@
     type = "top_tracks"
     term = 'short'
     amount = 50
+
+[[instructions]]
+    type = "top_tracks"
+    term = 'medium'
+    amount = 20

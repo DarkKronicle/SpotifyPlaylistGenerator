@@ -21,9 +21,18 @@ def get_groups(tracks, analysis, n=-1):
     # Get unique cluster values
     clusters = np.unique(predicted_clusters)
 
+    # Sort by distance so that if ran again we get similar results
     clustered_data = []
+    dists = []
+    bottom = np.array([-1, -1])
     for cluster in clusters:
         row_ix = np.where(predicted_clusters == cluster)
+        mean = data[row_ix].mean(axis=0)
+        dists.append(np.linalg.norm(mean - bottom))
         clustered_data.append((tracks[row_ix], analysis[row_ix]))
+    new_clustered = []
+    dists = np.array(dists)
+    for index in np.argsort(dists):
+        new_clustered.append(clustered_data[index])
 
-    return clustered_data
+    return new_clustered
