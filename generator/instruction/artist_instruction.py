@@ -36,7 +36,7 @@ async def artist_top(sp: tk.Spotify, artist: tk.model.Artist = None, amount: int
     """
     if generator.verbose:
         generator.logger.info('Fetched {0} top songs from artist {1}'.format(amount, artist.name))
-    return await sp.artist_top_tracks(artist, amount=amount)
+    return (await sp.artist_top_tracks(market='US', artist_id=artist.id))[:amount]
 
 
 @instruction('related_artists')

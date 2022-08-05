@@ -13,7 +13,7 @@ explicit = false
 
 [[instructions]]
     type = "recommendations"
-    artists = ["Nito"]
+    artists = ["ichika", "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"]
 
     max_speechiness = 0.3
     limit = 30
@@ -21,19 +21,30 @@ explicit = false
     min_acousticness = 0.5
 
 [[instructions]]
-    type = "recommendations"
-    artists = ["ichika"]
+    type = "artist_top"
+    artist = "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"
 
-    max_speechiness = 0.3
-    limit = 30
-    max_energy = 0.6
-    min_acousticness = 0.5
+[[instructions]]
+    type = "artist_top"
+    artist = "ichika"
+
+[[instructions]]
+    type = "artist_tracks"
+    artist = "ichika"
+    fetch = -1
+    select = 15
+
+[[instructions]]
+    type = "related_artists"
+    artist = "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"
+    amount = 8
+    instruction = {type = "artist_top", amount=10}
 
 [[instructions]]
     type = "recommendations"
     artists = ["fox capture plan", "PRIMITIVE ART ORCHESTRA", "SANOVA"]
 
     max_speechiness = 0.3
-    limit = 70
+    limit = 50
     max_energy = 0.4
 

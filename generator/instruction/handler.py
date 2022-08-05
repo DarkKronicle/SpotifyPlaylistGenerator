@@ -159,7 +159,7 @@ async def parse_var(sp, target, val):
         return await _parse_list(sp, val, target)
     if isinstance(val, dict):
         if target == Instruction:
-            kwargs = val['type']
+            kwargs = val
             instruct = _instructions[kwargs.pop('type')]
             return instruct, kwargs
         return await _parse_dict(sp, val, target)
