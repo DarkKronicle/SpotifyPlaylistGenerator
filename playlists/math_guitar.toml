@@ -1,0 +1,39 @@
+clear_duplicates = true
+region = 'US'
+explicit = false
+
+[audio_sort]
+    method = 'traveling'
+    chunks = 40
+    random_offset = true
+    attributes = ['energy', 'valence']
+
+[upload]
+    name = "Math but Chill"
+
+[[instructions]]
+    type = "recommendations"
+    artists = ["Nito"]
+
+    max_speechiness = 0.3
+    limit = 30
+    max_energy = 0.6
+    min_acousticness = 0.5
+
+[[instructions]]
+    type = "recommendations"
+    artists = ["ichika"]
+
+    max_speechiness = 0.3
+    limit = 30
+    max_energy = 0.6
+    min_acousticness = 0.5
+
+[[instructions]]
+    type = "recommendations"
+    artists = ["fox capture plan", "PRIMITIVE ART ORCHESTRA", "SANOVA"]
+
+    max_speechiness = 0.3
+    limit = 70
+    max_energy = 0.4
+

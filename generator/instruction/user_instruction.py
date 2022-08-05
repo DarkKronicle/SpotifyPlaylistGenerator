@@ -40,7 +40,8 @@ async def top_tracks(sp: tk.Spotify, amount: int = 20, term: str = 'short') -> l
     return top
 
 
-async def top_artists(sp: tk.Spotify, instruction: Instruction = None, term: str = 'short', limit: int = 10) -> list[tk.model.Track]:
+@instruction('top_artists')
+async def top_artists(sp: tk.Spotify, instruction: Instruction = None, term: str = 'short', amount: int = 10) -> list[tk.model.Track]:
     """
     Gets a users top artists
 
@@ -48,7 +49,7 @@ async def top_artists(sp: tk.Spotify, instruction: Instruction = None, term: str
     limit - Amount of artists to get
     term [short/medium/long] - Time frame
     """
-    results = await sp.current_user_top_artists(time_range='{0}_term'.format(term), limit=limit).items
+    results = await sp.current_user_top_artists(time_range='{0}_term'.format(term), limit=amount).items
     songs = []
     for artist in results:
         kwargs = instruction[1]

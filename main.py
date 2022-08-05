@@ -36,7 +36,6 @@ async def async_main(sp, args):
     await generator.setup(sp)
 
     if args.all:
-        collected = []
         for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
             await generator.run_playlist_file(sp, str(playlist))
 
