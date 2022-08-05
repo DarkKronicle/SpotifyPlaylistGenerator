@@ -19,3 +19,7 @@ remove_artists = ['Tracy Island', 'melodysheep']
     type = "top_tracks"
     term = 'medium'
     amount = 10
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "Saved: Bops"
