@@ -57,6 +57,14 @@ explicit = false
 [[instructions]]
     # You can also add genres https://developer.spotify.com/console/get-available-genre-seeds/
     type = "recommendations"
+    artists = ["ichika", "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"]
+    max_speechiness = 0.1
+    limit = 30
+    max_energy = 0.3
+
+[[instructions]]
+    # You can also add genres https://developer.spotify.com/console/get-available-genre-seeds/
+    type = "recommendations"
     artists = ["Siena Wind Orchestra"]
     tracks = ["アシタカとサン - Piano Solo Feature"]
     max_speechiness = 0.1
