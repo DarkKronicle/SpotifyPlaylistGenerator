@@ -98,16 +98,19 @@ async def _parse_list(sp, val: list, target):
     if not _list_of_type(val, str):
         return val
 
+    gotten = None
     match typing.get_args(target)[0]:
         case tk.model.Track:
-            return [await spotify.get_track(sp, query) for query in val]
+            gotten = [await spotify.get_track(sp, query) for query in val]
         case tk.model.Playlist:
-            return [await spotify.get_playlist(sp, query) for query in val]
+            gotten = [await spotify.get_playlist(sp, query) for query in val]
         case tk.model.Album:
-            return [await spotify.get_album(sp, query) for query in val]
+            gotten = [await spotify.get_album(sp, query) for query in val]
         case tk.model.Artist:
-            return [await spotify.get_artist(sp, query) for query in val]
-    return val
+            gotten = [await spotify.get_artist(sp, query) for query in val]
+    if gotten is None:
+        return val
+    return filter(lambda x: x is not None, gotten)
 
 
 async def _parse_dict(sp, val: dict, target):

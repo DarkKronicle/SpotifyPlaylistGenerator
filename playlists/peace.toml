@@ -48,14 +48,6 @@ explicit = false
 [[instructions]]
     # You can also add genres https://developer.spotify.com/console/get-available-genre-seeds/
     type = "recommendations"
-    tracks = ["Rest by Pheeno"]
-    max_speechiness = 0.1
-    limit = 30
-    max_energy = 0.3
-
-[[instructions]]
-    # You can also add genres https://developer.spotify.com/console/get-available-genre-seeds/
-    type = "recommendations"
     artists = ["All That Jazz"]
     tracks = ["めぐる季節"]
     max_speechiness = 0.1

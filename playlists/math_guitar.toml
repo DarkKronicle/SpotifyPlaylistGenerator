@@ -37,7 +37,7 @@ explicit = false
 [[instructions]]
     type = "related_artists"
     artist = "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"
-    amount = 8
+    amount = 4
     instruction = {type = "artist_top", amount=10}
 
 [[instructions]]

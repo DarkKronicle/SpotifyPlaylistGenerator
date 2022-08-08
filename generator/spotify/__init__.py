@@ -13,7 +13,10 @@ async def get_track(sp: tk.Spotify, query: str):
     uri = get_id_from_uri(query)
     if uri is not None:
         return await sp.track(uri)
-    return (await sp.search(query, limit=1))[0].items[0]
+    tracks = await sp.search(query, limit=1)
+    if len(tracks) > 0 and len(tracks[0].items) > 0:
+        return tracks[0].items[0]
+    return None
 
 
 @cache()
