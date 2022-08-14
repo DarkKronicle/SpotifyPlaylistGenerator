@@ -36,7 +36,7 @@ explicit = false
 
 [[instructions]]
     type = "recommendations"
-    artists = ["fox capture plan", "PRIMITIVE ART ORCHESTRA", "SANOVA"]
+    artists = ["spotify:artist:7sEmXHrnEnX7PScoJAvSvo", "spotify:artist:5HrFJi08nNdu50d0AQVEi0", "spotify:artist:15fZ3hlvf6rcqHls6hZAbt"]
 
     max_speechiness = 0.3
     limit = 50
