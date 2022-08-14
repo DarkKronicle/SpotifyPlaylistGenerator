@@ -13,10 +13,10 @@ explicit = false
 
 [[instructions]]
     type = "recommendations"
-    artists = ["ichika", "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"]
+    artists = ["spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4", "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"]
 
     max_speechiness = 0.3
-    limit = 30
+    limit = 50
     max_energy = 0.6
     min_acousticness = 0.5
 
@@ -26,19 +26,13 @@ explicit = false
 
 [[instructions]]
     type = "artist_top"
-    artist = "ichika"
+    artist = "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"
 
 [[instructions]]
     type = "artist_tracks"
-    artist = "ichika"
+    artist = "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"
     fetch = -1
     select = 15
-
-[[instructions]]
-    type = "related_artists"
-    artist = "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"
-    amount = 4
-    instruction = {type = "artist_top", amount=10}
 
 [[instructions]]
     type = "recommendations"
