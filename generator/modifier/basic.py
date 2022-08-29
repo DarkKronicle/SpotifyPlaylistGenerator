@@ -5,7 +5,7 @@ import tekore as tk
 
 
 @modifier('clear_duplicates')
-async def clear_duplicates(sp, songs, active: bool):
+async def clear_duplicates(sp, songs: list[tk.model.Track], active: bool):
     """
     Clears duplicates
 
@@ -13,11 +13,11 @@ async def clear_duplicates(sp, songs, active: bool):
     """
     if not active:
         return songs
-    names = []
+    uris = []
     new_songs = []
     for track in songs:
-        if track.name not in names:
-            names.append(track.name)
+        if track.uri not in uris:
+            uris.append(track.uri)
             new_songs.append(track)
     if generator.verbose:
         generator.logger.info('Removed {0} duplicates'.format(len(songs) - len(new_songs)))

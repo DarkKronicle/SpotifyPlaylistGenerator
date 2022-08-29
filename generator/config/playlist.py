@@ -1,3 +1,6 @@
+import logging
+import traceback
+
 import generator.instruction as instruction
 import generator.modifier as modifier
 from tqdm import tqdm
@@ -19,14 +22,24 @@ class Playlist:
         data = dict(self.raw_data)
         if generator.verbose or not self.log:
             for pos, i in enumerate(data['instructions']):
-                if self.log:
-                    generator.logger.info('Running instruction {0}/{1} {2}'.format(pos + 1, len(data['instructions']), i['type']))
-                songs.extend(await instruction.run(sp, i))
+                try:
+                    if self.log:
+                        generator.logger.info(
+                            'Running instruction {0}/{1} {2}'.format(pos + 1, len(data['instructions']), i['type'])
+                        )
+                    songs.extend(await instruction.run(sp, i))
+                except:
+                    traceback.print_exc()
+                    logging.error('Could not run instruction ' + str(i))
         else:
             pbar = tqdm(data['instructions'])
             for i in pbar:
-                pbar.set_description(self.name + ': ' + i['type'])
-                songs.extend(await instruction.run(sp, i))
+                try:
+                    pbar.set_description(self.name + ': ' + i['type'])
+                    songs.extend(await instruction.run(sp, i))
+                except:
+                    traceback.print_exc()
+                    logging.error('Could not run instruction ' + str(i))
         # Run modifiers like clear duplicates and what not
         songs = await modifier.run_modifiers(sp, songs, data)
         return songs
@@ -36,3 +49,6 @@ class Playlist:
 
     def get(self, target, default):
         return self.raw_data.get(target, default)
+
+    def __str__(self):
+        return '<Playlist ' + self.name + '>'

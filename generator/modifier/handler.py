@@ -1,3 +1,6 @@
+import logging
+import traceback
+
 import generator
 from functools import wraps
 
@@ -38,10 +41,14 @@ async def run_modifiers(sp, songs: list, other_parameters: dict):
         if generator.verbose:
             generator.logger.info('Running modifier {0}'.format(key))
         mod = _modifiers.get(key)
-        if isinstance(val, dict):
-            songs = await mod(sp, songs, **val)
-        else:
-            songs = await mod(sp, songs, val)
+        try:
+            if isinstance(val, dict):
+                songs = await mod(sp, songs, **val)
+            else:
+                songs = await mod(sp, songs, val)
+        except:
+            logging.warning('Could not run modifier {0}'.format(key))
+            traceback.print_exc()
     return songs
 
 

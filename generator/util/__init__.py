@@ -1,3 +1,6 @@
+import logging
+import traceback
+
 import generator
 import tekore as tk
 import pathlib
@@ -21,14 +24,24 @@ def load_playlist(file):
 
 
 async def run_playlist_file(sp: tk.Spotify, file):
-    playlist = load_playlist(file)
+    try:
+        playlist = load_playlist(file)
+    except:
+        logging.warning('Could not load file: {0}'.format(file))
+        traceback.print_exc()
+        return
     await run_playlist(sp, playlist)
 
 
 async def run_playlist(sp: tk.Spotify, playlist):
-    songs = await playlist.get_songs(sp)
-    if not generator.silent:
-        generator.logger.info('Done with ' + str(len(songs)) + ' songs')
+    try:
+        songs = await playlist.get_songs(sp)
+        if not generator.silent:
+            generator.logger.info('Done with ' + str(len(songs)) + ' songs')
+    except:
+        logging.warning('Error handling playlist file: {0}'.format(playlist))
+        traceback.print_exc()
+        return
 
 
 def show_all_help():
