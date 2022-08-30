@@ -81,15 +81,19 @@ async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount
         num = 0
         while True:
             num += 1
+            cur_track = [t.id for t in tracks[:cut]]
             try:
-                songs.extend((await sp.recommendations(limit=lim, track_ids=[t.id for t in tracks[:cut]], **attributes)).tracks)
+                songs.extend((await sp.recommendations(limit=lim, track_ids=cur_track, **attributes)).tracks)
+                break
             except Exception as e:
                 if num < 5:
                     # Some reason it just sometimes hates it more than it needs to
                     logging.info('Generation instruction failed, trying again')
+                    random.shuffle(cur_track)
                     continue
                 else:
-                    raise e
+                    logging.warning("Couldn't get generation to work, skipping")
+                    break
         tracks = tracks[cut:]
     if generator.verbose:
         generator.logger.info('Generated {0} tracks from {1} tracks with {2} requests'.format(len(songs), total, iters))

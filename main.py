@@ -1,4 +1,6 @@
 import pathlib
+
+import httpx
 import tekore as tk
 import generator
 
@@ -67,7 +69,11 @@ def main():
 
     manager = generator.config.ConfigManager()
 
-    sp = tk.Spotify(generator.get_default_token(manager), chunked_on=True, asynchronous=True)
+    trans = httpx.AsyncHTTPTransport(retries=3)
+    client = httpx.AsyncClient(timeout=120, transport=trans)
+    sender = tk.CachingSender(256, tk.AsyncSender(client=client))
+
+    sp = tk.Spotify(generator.get_default_token(manager), sender=sender, chunked_on=True)
     if args.prompt:
         sp.token = tk.prompt_for_user_token(
             tk.client_id_var, tk.client_secret_var, tk.redirect_uri_var, scope=generator.scopes,
