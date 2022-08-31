@@ -22,7 +22,7 @@ async def get_track(sp: tk.Spotify, query: str):
 @cache()
 async def get_saved_tracks(sp: tk.Spotify):
     page = await sp.saved_tracks(limit=50)
-    all_items = await sp.all_items(page)
+    all_items = [item async for item in sp.all_items(page)]
     return [t.track for t in all_items]
 
 

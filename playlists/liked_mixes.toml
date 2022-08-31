@@ -1,0 +1,31 @@
+[separate]
+    title = 'Blender {0}'
+    instruction = {type = "generate", amount=60, mix_same=true}
+    n = 8
+    [separate.audio_sort]
+        method = 'traveling'
+        chunks = 25
+        random_offset = true
+        attributes = ['energy', 'valence', 'acousticness']
+
+[[instructions]]
+    type = "saved_tracks"
+    amount = 100
+
+[[instructions]]
+    type = "top_tracks"
+    term = 'short'
+    amount = 50
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = 'spotify:playlist:73AyL1WxoRo8OI6glrZq9J'
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = 'Saved: Bops'
+
+[[instructions]]
+    type = "top_tracks"
+    term = 'medium'
+    amount = 20

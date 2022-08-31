@@ -5,6 +5,7 @@ from generator import sort
 from generator.sort import group
 from generator import spotify
 from generator import instruction as inst
+from .basic import clear_duplicates
 
 
 @modifier('audio_sort', sort=3)
@@ -45,6 +46,7 @@ async def sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs)
 
 @modifier('separate')
 async def groups(sp, songs, instruction: dict, title: str = 'Mix {0}', n=-1, **modifiers):
+    songs = await clear_duplicates(sp, songs, True)
     analysis = await sp.tracks_audio_features([t.id for t in songs])
     if n > 10:
         n = 10
