@@ -14,7 +14,7 @@ async def playlist_songs(sp: tk.Spotify, name: tk.model.Playlist, amount: int = 
     sample (int) - Random sample to get from the playlist. If -1 it is all.
     """
     tracks = await generator.spotify.get_playlist_tracks(sp, name)
-    if len(tracks) > amount:
+    if len(tracks) > amount > 0:
         tracks = tracks[:amount]
     if 0 < sample < len(tracks):
         tracks = random.sample(tracks, sample)
