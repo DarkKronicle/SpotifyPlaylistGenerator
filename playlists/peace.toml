@@ -16,6 +16,11 @@ explicit = false
     name = "Saved: Peace"
 
 [[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:1d2zoGmfQPuxptnd8JBayK"
+    sample = 30
+
+[[instructions]]
     # Gets recommendations for specific artists/songs
     # All this stuff is supported https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations
     type = "recommendations"

@@ -1,0 +1,16 @@
+clear_duplicates = true
+region = 'US'
+
+[audio_sort]
+    method = 'traveling'
+
+[upload]
+    name = "Chiblin'"
+
+[energy]
+    lower = 0
+    upper = 0.3
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:6sj2NVYbt0ikPyV76m0Uqv"

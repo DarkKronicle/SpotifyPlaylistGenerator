@@ -1,0 +1,18 @@
+clear_duplicates = true
+region = 'US'
+
+[audio_sort]
+    method = 'traveling'
+
+[upload]
+    name = "Viblin'"
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:6sj2NVYbt0ikPyV76m0Uqv"
+    sample = 50
+
+[[instructions]]
+    type = "generate"
+    tracks = {type = "playlist_tracks", name = "spotify:playlist:6sj2NVYbt0ikPyV76m0Uqv"}
+    amount = 50

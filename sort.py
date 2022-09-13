@@ -1,4 +1,6 @@
 import asyncio
+
+import httpx
 import tekore as tk
 import generator
 
@@ -30,11 +32,11 @@ async def async_main(sp, args):
     await generator.setup(sp)
 
     playlists = await spotify.get_user_playlists(sp)
-    play = spotify.get_playlist(sp, args.playlist)
+    play = await spotify.get_playlist(sp, args.playlist)
     if play is None:
         generator.logger.warn('No playlist found with name ' + args.playlist)
         return
-    if not args.export and play.owner.id != sp.current_user().id:
+    if not args.export and play.owner.id != (await sp.current_user()).id:
         generator.logger.warn("To sort a playlist that isn't yours you have to provide the --export argument!")
         return
     kwargs = {}
@@ -59,7 +61,11 @@ def main():
 
     manager = generator.config.ConfigManager()
 
-    sp = tk.Spotify(generator.get_default_token(manager), chunked_on=True)
+    trans = httpx.AsyncHTTPTransport(retries=3)
+    client = httpx.AsyncClient(timeout=120, transport=trans)
+    sender = tk.CachingSender(256, tk.AsyncSender(client=client))
+
+    sp = tk.Spotify(generator.get_default_token(manager), sender=sender, chunked_on=True)
     if args.prompt:
         sp.token = tk.prompt_for_user_token(
             tk.client_id_var, tk.client_secret_var, tk.redirect_uri_var, scope=generator.scopes,
