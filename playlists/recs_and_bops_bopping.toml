@@ -11,6 +11,10 @@ region = 'US'
     lower = 0.5
     upper = 1
 
+[danceability]
+    lower = 0.5
+    upper = 1
+
 [[instructions]]
     type = "playlist_tracks"
     name = "spotify:playlist:09XtrnnCzAKqOvsqDderH0"
