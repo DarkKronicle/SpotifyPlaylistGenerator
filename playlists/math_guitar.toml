@@ -11,6 +11,10 @@ explicit = false
 [upload]
     name = "Math but Chill"
 
+[energy]
+    lower = 0
+    upper = 0.5
+
 [[instructions]]
     type = "recommendations"
     artists = ["spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4", "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"]

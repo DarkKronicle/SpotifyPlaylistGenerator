@@ -1,0 +1,15 @@
+name = "Traveling Salesman Sort"
+description = "Sorts a specified playlist using the traveling salesman algorithm"
+
+variables = ['playlist']
+
+
+[[template.upload]]
+    name = {'variable' = 'playlist'}
+
+[[template.audio_sort]]
+    method = {'literal' = 'traveling'}
+
+[[template.instruction]]
+    type = 'playlist_tracks'
+    name = {'variable' = 'playlist'}

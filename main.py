@@ -45,6 +45,8 @@ async def async_main(sp, args):
         file = str(args.playlist)
         if not file.startswith('playlists/'):
             file = 'playlists/' + file
+        if not file.endswith('.toml'):
+            file = file + '.toml'
         await generator.run_playlist_file(sp, file)
 
 
