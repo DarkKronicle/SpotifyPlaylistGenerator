@@ -23,3 +23,7 @@ remove_artists = ['Tracy Island', 'melodysheep']
 [[instructions]]
     type = "playlist_tracks"
     name = "Saved: Bops"
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:73AyL1WxoRo8OI6glrZq9J"

@@ -75,10 +75,7 @@ async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount
 
     save_tracks = []
     if mix_same:
-        target = math.ceil(math.sqrt(4 * len(tracks)) - 5)
-        if target >= 1:
-            save_tracks = random.sample(tracks, target)
-            amount = amount - len(save_tracks)
+        save_tracks = tracks
     if random_sample:
         random.shuffle(tracks)
     for i in range(iters):

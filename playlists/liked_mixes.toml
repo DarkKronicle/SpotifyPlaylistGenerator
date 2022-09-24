@@ -2,6 +2,8 @@
     title = 'Blender {0}'
     instruction = {type = "generate", amount=60, mix_same=true, pool_size=20}
     n = 8
+    [separate.clear_duplicates]
+        active = true
     [separate.audio_sort]
         method = 'traveling'
         chunks = 25
