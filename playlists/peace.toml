@@ -29,6 +29,7 @@ explicit = false
     # You can fine tune exactly what you want
     min_instrumentalness = 0.5
     limit = 30
+    pool_size = 60
     max_energy = 0.3
 
 [[instructions]]
@@ -40,6 +41,7 @@ explicit = false
     # You can fine tune exactly what you want
     min_instrumentalness = 0.5
     limit = 30
+    pool_size = 60
     max_energy = 0.3
 
 [[instructions]]
@@ -48,6 +50,7 @@ explicit = false
     artists = ["insaneintherainmusic"]
     max_speechiness = 0.1
     limit = 30
+    pool_size = 60
     max_energy = 0.3
 
 [[instructions]]
@@ -56,6 +59,7 @@ explicit = false
     artists = ["All That Jazz"]
     tracks = ["めぐる季節"]
     min_instrumentalness = 0.7
+    pool_size = 60
     limit = 30
     max_energy = 0.3
 
@@ -64,6 +68,7 @@ explicit = false
     type = "recommendations"
     artists = ["ichika", "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"]
     min_instrumentalness = 0.7
+    pool_size = 60
     limit = 30
     max_energy = 0.3
 
@@ -73,5 +78,6 @@ explicit = false
     artists = ["Siena Wind Orchestra"]
     tracks = ["アシタカとサン - Piano Solo Feature"]
     min_instrumentalness = 0.6
+    pool_size = 60
     limit = 30
     max_energy = 0.3

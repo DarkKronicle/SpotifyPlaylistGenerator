@@ -1,6 +1,6 @@
 [separate]
     title = 'Mix {0}'
-    instruction = {type = "generate", amount=50, mix_same=true}
+    instruction = {type = "generate", amount=50, mix_same=true, pool_size=20}
     [separate.audio_sort]
         method = 'traveling'
         chunks = 25

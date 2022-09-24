@@ -21,6 +21,7 @@ explicit = false
 
     min_instrumentalness = 0.5
     limit = 50
+    pool_size = 100
     max_energy = 0.6
     min_acousticness = 0.5
 
@@ -44,5 +45,6 @@ explicit = false
 
     min_instrumentalness = 0.5
     limit = 50
+    pool_size = 100
     max_energy = 0.4
 

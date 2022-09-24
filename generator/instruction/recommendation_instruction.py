@@ -9,7 +9,7 @@ import tekore as tk
 
 
 @instruction('recommendations')
-async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, artists: list[tk.model.Artist] = None, genres: list[str] = None, **attributes) -> list[tk.model.Track]:
+async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, artists: list[tk.model.Artist] = None, limit=20, pool_size=20, genres: list[str] = None, **attributes) -> list[tk.model.Track]:
     """
     Get recommendations based on some seeds (maximum 5 of all combined, with at least one)
 
@@ -18,6 +18,8 @@ async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, a
     tracks (list[str], or instruction) - Tracks for seed
     artists (list[str], or instruction) - Artists for seed
     genres (list[str], or instruction) - Genres for seed
+    limit (int) - Amount of songs to get
+    pool_size (int) - The amount of recommendations to get for a group, and then randomly select for the limit
     **attributes - Anything from https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations
                  - (Should be referenced in key/pair)
     """
@@ -32,9 +34,12 @@ async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, a
             recs = (await sp.recommendations(
                 artist_ids=[a.id for a in artists],
                 genres=genres,
+                limit=pool_size if pool_size > limit else limit,
                 track_ids=[t.id for t in tracks],
                 **attributes
             )).tracks
+            if len(recs) > limit:
+                recs = random.sample(recs, limit)
         except Exception as e:
             if i < 5:
                 logging.info('Recommendations failed, trying again.')
@@ -49,13 +54,14 @@ async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, a
 
 
 @instruction('generate')
-async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, mix_same=False, **attributes) -> list[tk.model.Track]:
+async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, mix_same=False, pool_size=15, **attributes) -> list[tk.model.Track]:
     """
     Generates many tracks from specified tracks. Can be used to generate a playlist from a playlist
 
     tracks (list of tracks) - Tracks to generate from
     amount (int) - Amount of tracks to return
     random_sample (bool) - If it should randomly select the tracks that it's seed is
+    pool_size (int) - The amount of recommendations to get for a group, and then randomly select for the limit
     """
     songs = []
     total = len(tracks)
@@ -83,7 +89,12 @@ async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount
             num += 1
             cur_track = [t.id for t in tracks[:cut]]
             try:
-                songs.extend((await sp.recommendations(limit=lim, track_ids=cur_track, **attributes)).tracks)
+                limit = pool_size if pool_size > lim else lim
+                tracks = (await sp.recommendations(track_ids=cur_track, limit=limit, **attributes)).tracks
+                if len(tracks) <= lim:
+                    songs.extend(tracks)
+                else:
+                    songs.extend(random.sample(tracks, lim))
                 break
             except Exception as e:
                 if num < 5:
