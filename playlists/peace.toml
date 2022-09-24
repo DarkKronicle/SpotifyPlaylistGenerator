@@ -27,7 +27,7 @@ explicit = false
     artists = ["fox capture plan", "PRIMITIVE ART ORCHESTRA"]
 
     # You can fine tune exactly what you want
-    max_speechiness = 0.2
+    min_instrumentalness = 0.5
     limit = 30
     max_energy = 0.3
 
@@ -38,7 +38,7 @@ explicit = false
     artists = ["SANOVA"]
 
     # You can fine tune exactly what you want
-    max_speechiness = 0.2
+    min_instrumentalness = 0.5
     limit = 30
     max_energy = 0.3
 
@@ -55,7 +55,7 @@ explicit = false
     type = "recommendations"
     artists = ["All That Jazz"]
     tracks = ["めぐる季節"]
-    max_speechiness = 0.1
+    min_instrumentalness = 0.7
     limit = 30
     max_energy = 0.3
 
@@ -63,7 +63,7 @@ explicit = false
     # You can also add genres https://developer.spotify.com/console/get-available-genre-seeds/
     type = "recommendations"
     artists = ["ichika", "spotify:artist:1v7B6ZWa7QRQS3knn3Jvf4"]
-    max_speechiness = 0.1
+    min_instrumentalness = 0.7
     limit = 30
     max_energy = 0.3
 
@@ -72,6 +72,6 @@ explicit = false
     type = "recommendations"
     artists = ["Siena Wind Orchestra"]
     tracks = ["アシタカとサン - Piano Solo Feature"]
-    max_speechiness = 0.1
+    min_instrumentalness = 0.6
     limit = 30
     max_energy = 0.3
