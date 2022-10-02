@@ -4,8 +4,7 @@ region = 'US'
 # These are from my wake up playlist
 remove_artists = ['Tracy Island', 'melodysheep']
 
-[audio_sort]
-    method = 'traveling'
+random = true
 
 [upload]
     name = 'My Current Bops'

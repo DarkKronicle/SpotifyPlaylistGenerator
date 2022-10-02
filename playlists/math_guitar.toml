@@ -2,11 +2,7 @@ clear_duplicates = true
 region = 'US'
 explicit = false
 
-[audio_sort]
-    method = 'traveling'
-    chunks = 40
-    random_offset = true
-    attributes = ['energy', 'valence']
+random = true
 
 [upload]
     name = "Math but Chill"

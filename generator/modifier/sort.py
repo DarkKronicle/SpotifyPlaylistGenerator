@@ -1,3 +1,5 @@
+import random
+
 from . import *
 
 import generator
@@ -22,6 +24,16 @@ async def audio_sort_playlist(sp, songs, method: str, reverse: bool = False, **k
         return [song[0] for song in sorted(pair, key=lambda s: getattr(s[1], method), reverse=reverse)]
     if method == 'traveling' or method == 'travelling':
         return sort.traveling(pair, **kwargs)
+    return songs
+
+
+@modifier('random')
+async def random_sort(sp, songs, active: bool):
+
+    if not active:
+        return songs
+
+    random.shuffle(songs)
     return songs
 
 

@@ -3,11 +3,8 @@
     instruction = {type = "generate", amount=50, mix_same=true, pool_size=20}
     [separate.clear_duplicates]
         active = true
-    [separate.audio_sort]
-        method = 'traveling'
-        chunks = 25
-        random_offset = true
-        attributes = ['energy', 'valence', 'acousticness']
+    [separate.random]
+        active = true
 
 
 [[instructions]]
