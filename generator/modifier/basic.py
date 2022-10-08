@@ -1,3 +1,5 @@
+import random
+
 import generator
 from . import *
 import generator.spotify as spotify
@@ -22,6 +24,15 @@ async def clear_duplicates(sp, songs: list[tk.model.Track], active: bool):
     if generator.verbose:
         generator.logger.info('Removed {0} duplicates'.format(len(songs) - len(new_songs)))
     return new_songs
+
+
+@modifier('trim', sort=3)
+async def trim(sp, songs, amount: int = 50, rand: bool = False):
+    if len(songs) < amount:
+        return songs
+    if rand:
+        return random.sample(songs, amount)
+    return songs[:amount]
 
 
 @modifier('upload', sort=5)

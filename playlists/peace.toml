@@ -3,6 +3,7 @@ region = 'US'
 explicit = false
 
 random = true
+trim = 75
 
 [upload]
     name = "Peace"

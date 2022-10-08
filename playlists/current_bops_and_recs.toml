@@ -13,4 +13,4 @@ remove_artists = ['Tracy Island', 'melodysheep']
 [[instructions]]
     type = "generate"
     tracks = {type = "playlist_tracks", name = "My Current Bops"}
-    amount = 80
+    amount = 200
