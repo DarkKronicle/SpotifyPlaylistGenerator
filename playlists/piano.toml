@@ -1,0 +1,23 @@
+clear_duplicates = true
+random = true
+
+[upload]
+    name = "Instrumental but peace"
+
+[[instructions]]
+    type = "album_tracks"
+    album = "spotify:album:6Ppc6nAmE5KX89iES0rQpQ"
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:37i9dQZF1DX4sWSpwq3LiO"
+    sample = 30
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:4Gn6rgEi6D1kbXIn5qKHxV"
+    sample = 50
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:40m8hwK2SpGR6IknR6k68K"

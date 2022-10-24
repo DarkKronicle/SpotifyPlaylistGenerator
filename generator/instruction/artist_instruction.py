@@ -59,3 +59,11 @@ async def related_artists(sp: tk.Spotify, artist: tk.model.Artist = None, instru
     if generator.verbose:
         generator.logger.info('Fetched {0} similar from artist {1} and collected {2} songs'.format(len(related), artist.name, len(songs)))
     return songs
+
+
+@instruction('album_tracks')
+async def album_tracks(sp: tk.Spotify, album: tk.model.Album = None) -> list[tk.model.Track]:
+    songs = []
+    async for track in sp.all_items(await sp.album_tracks(album.id, limit=50)):
+        songs.append(track)
+    return songs
