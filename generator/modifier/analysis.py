@@ -8,8 +8,13 @@ async def energy(sp, songs, lower=0, upper=1):
 
 
 @modifier('danceability')
-async def energy(sp, songs, lower=0, upper=1):
+async def danceability(sp, songs, lower=0, upper=1):
     return await filter_by_var(sp, songs, 'danceability', lower, upper)
+
+
+@modifier('instrumentalness')
+async def instrumentalness(sp, songs, lower=0, upper=1):
+    return await filter_by_var(sp, songs, 'instrumentalness', lower, upper)
 
 
 async def filter_by_var(sp: tk.Spotify, songs, attribute, lower=0, upper=1):

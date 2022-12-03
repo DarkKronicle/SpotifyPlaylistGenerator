@@ -1,0 +1,17 @@
+clear_duplicates = true
+region = 'US'
+
+random = true
+
+[separate]
+        title = 'Chillin {0}'
+        instruction = {type = "generate", amount=50, mix_same=true, pool_size=20}
+    [separate.clear_duplicates]
+        active = true
+    [separate.random]
+        active = true
+
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:05BsqSnSAG8cBoJLxTdJVy"

@@ -1,0 +1,17 @@
+clear_duplicates = true
+region = 'US'
+
+random = true
+
+[upload]
+    name = "My Tops Seeded"
+
+[[instructions]]
+    type = "generate"
+    tracks = {type = "playlist_tracks", name = "spotify:playlist:05BsqSnSAG8cBoJLxTdJVy"}
+    amount = 150
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:05BsqSnSAG8cBoJLxTdJVy"
+

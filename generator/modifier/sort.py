@@ -57,7 +57,7 @@ async def sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs)
 
 
 @modifier('separate')
-async def groups(sp, songs, instruction: dict, title: str = 'Mix {0}', n=-1, **modifiers):
+async def groups(sp, songs, instruction: dict, title: str = 'Mix {0}', n=-1, keep_seed=False, **modifiers):
     songs = await clear_duplicates(sp, songs, True)
     analysis = await sp.tracks_audio_features([t.id for t in songs])
     if n > 10:
@@ -68,7 +68,9 @@ async def groups(sp, songs, instruction: dict, title: str = 'Mix {0}', n=-1, **m
         if i > 10:
             generator.logger.info('Woah, way more than 10!')
             return songs
-        cluster_songs = await inst.run(sp, dict(instruction), tracks=list(cluster[0]))
+        cluster_songs: list = await inst.run(sp, dict(instruction), tracks=list(cluster[0]))
+        if keep_seed:
+            cluster_songs.extend(list(cluster[0]))
         if sort is not None:
             cluster_songs = await run_modifiers(sp, cluster_songs, modifiers)
         if generator.prevent_uploading:
