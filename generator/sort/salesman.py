@@ -87,7 +87,7 @@ def traveling(pairs, return_tuple=False, **kwargs):
             return pairs
         return [p[0] for p in pairs]
     # Code by https://dev.to/felixhilden/smart-playlist-shuffle-using-travelling-salesman-58i1 (author of Tekore)
-    attributes = kwargs.pop('attributes', ['acousticness', 'energy', 'instrumentalness', 'loudness', 'speechiness', 'valence'])
+    attributes = kwargs.pop('attributes', ['energy', 'instrumentalness', 'loudness', 'valence'])
     new_pairs = _traveling_impl(pairs, attributes, **kwargs)
     chunk_size = kwargs.get('chunks', -1)
     if chunk_size > 0:

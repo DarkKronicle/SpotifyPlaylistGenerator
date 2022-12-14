@@ -1,0 +1,15 @@
+random = true
+clear_duplicates = true
+explicit = false
+
+
+trim = 25
+
+
+[upload]
+    name = "Wake me up"
+
+[[instructions]]
+    type = "playlist_tracks"
+    name = "spotify:playlist:69fEt9DN5r4JQATi52sRtq" # Sound of everything
+    sample = 50

@@ -4,7 +4,7 @@ from sklearn.cluster import Birch
 
 
 def get_groups(tracks, analysis, n=-1):
-    attributes = ['energy', 'valence', 'acousticness']
+    attributes = ['energy', 'instrumentalness', 'loudness', 'valence']
     data = np.array(get_features(analysis, attributes))
     for i, col in enumerate(attributes):
         minimum = data[:, i].min()

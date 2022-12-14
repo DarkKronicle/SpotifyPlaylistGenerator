@@ -119,7 +119,7 @@ async def allowed_region(sp, songs, region: str = 'US'):
     return new_songs
 
 
-@modifier('explicit_filter')
+@modifier('explicit')
 async def explicit_filter(sp, songs, explicit: bool = False):
     new_songs = []
     for track in songs:

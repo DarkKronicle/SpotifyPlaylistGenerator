@@ -17,7 +17,3 @@ random = true
     type = "playlist_tracks"
     name = "spotify:playlist:4Gn6rgEi6D1kbXIn5qKHxV"
     sample = 50
-
-[[instructions]]
-    type = "playlist_tracks"
-    name = "spotify:playlist:40m8hwK2SpGR6IknR6k68K"
