@@ -5,6 +5,7 @@ import generator.instruction as instruction
 import generator.modifier as modifier
 from tqdm import tqdm
 import generator
+from generator.context import Context
 
 
 class Playlist:
@@ -17,9 +18,13 @@ class Playlist:
         else:
             self.log = log
 
+    def create_context(self, sp) -> Context:
+        return Context(sp)
+
     async def get_songs(self, sp):
         songs = []
         data = dict(self.raw_data)
+        ctx = self.create_context(sp)
         if generator.verbose or not self.log:
             for pos, i in enumerate(data['instructions']):
                 try:
@@ -27,7 +32,7 @@ class Playlist:
                         generator.logger.info(
                             'Running instruction {0}/{1} {2}'.format(pos + 1, len(data['instructions']), i['type'])
                         )
-                    songs.extend(await instruction.run(sp, i))
+                    songs.extend(await instruction.run(ctx, i))
                 except:
                     traceback.print_exc()
                     logging.error('Could not run instruction ' + str(i))
@@ -36,12 +41,12 @@ class Playlist:
             for i in pbar:
                 try:
                     pbar.set_description(self.name + ': ' + i['type'])
-                    songs.extend(await instruction.run(sp, i))
+                    songs.extend(await instruction.run(ctx, i))
                 except:
                     traceback.print_exc()
                     logging.error('Could not run instruction ' + str(i))
         # Run modifiers like clear duplicates and what not
-        songs = await modifier.run_modifiers(sp, songs, data)
+        songs = await modifier.run_modifiers(ctx, songs, data)
         return songs
 
     def __getitem__(self, item):

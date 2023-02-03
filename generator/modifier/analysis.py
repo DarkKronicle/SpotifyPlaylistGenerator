@@ -1,20 +1,22 @@
 from . import *
 import tekore as tk
 
+from ..context import Context
+
 
 @modifier('energy')
-async def energy(sp, songs, lower=0, upper=1):
-    return await filter_by_var(sp, songs, 'energy', lower, upper)
+async def energy(ctx: Context, songs, lower=0, upper=1):
+    return await filter_by_var(ctx.sp, songs, 'energy', lower, upper)
 
 
 @modifier('danceability')
-async def danceability(sp, songs, lower=0, upper=1):
-    return await filter_by_var(sp, songs, 'danceability', lower, upper)
+async def danceability(ctx: Context, songs, lower=0, upper=1):
+    return await filter_by_var(ctx.sp, songs, 'danceability', lower, upper)
 
 
 @modifier('instrumentalness')
-async def instrumentalness(sp, songs, lower=0, upper=1):
-    return await filter_by_var(sp, songs, 'instrumentalness', lower, upper)
+async def instrumentalness(ctx: Context, songs, lower=0, upper=1):
+    return await filter_by_var(ctx.sp, songs, 'instrumentalness', lower, upper)
 
 
 async def filter_by_var(sp: tk.Spotify, songs, attribute, lower=0, upper=1):

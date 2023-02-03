@@ -7,9 +7,11 @@ import generator
 from generator import sort
 import tekore as tk
 
+from ..context import Context
 
-@instruction('recommendations')
-async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, artists: list[tk.model.Artist] = None, limit=20, pool_size=20, genres: list[str] = None, **attributes) -> list[tk.model.Track]:
+
+@instruction('recommendations', aliases=['recs'])
+async def recommendations(ctx: Context, tracks: list[tk.model.Track] = None, artists: list[tk.model.Artist] = None, limit=20, pool_size=20, genres: list[str] = None, **attributes) -> list[tk.model.Track]:
     """
     Get recommendations based on some seeds (maximum 5 of all combined, with at least one)
 
@@ -31,7 +33,7 @@ async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, a
     while True:
         i += 1
         try:
-            recs = (await sp.recommendations(
+            recs = (await ctx.sp.recommendations(
                 artist_ids=[a.id for a in artists],
                 genres=genres,
                 limit=pool_size if pool_size > limit else limit,
@@ -53,8 +55,8 @@ async def recommendations(sp: tk.Spotify, tracks: list[tk.model.Track] = None, a
     return recs
 
 
-@instruction('generate')
-async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, mix_same=False, pool_size=15, **attributes) -> list[tk.model.Track]:
+@instruction('generate', aliases=['gen'])
+async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, mix_same=False, pool_size=15, **attributes) -> list[tk.model.Track]:
     """
     Generates many tracks from specified tracks. Can be used to generate a playlist from a playlist
 
@@ -66,7 +68,7 @@ async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount
     songs = []
     total = len(tracks)
     iters = math.ceil(len(tracks) / 5)
-    analysis = await sp.tracks_audio_features([t.id for t in tracks])
+    analysis = await ctx.sp.tracks_audio_features([t.id for t in tracks])
     pair = [(tracks[i], analysis[i]) for i in range(len(tracks))]
     if len(tracks) < 50:
         tracks = sort.traveling(pair)
@@ -86,14 +88,17 @@ async def playlist_generate(sp: tk.Spotify, tracks: list[tk.model.Track], amount
             num += 1
             cur_track = [t.id for t in tracks[:cut]]
             try:
+                if "limit" in attributes:
+                    attributes.pop("limit")
                 limit = pool_size if pool_size > lim else lim
-                tracks = (await sp.recommendations(track_ids=cur_track, limit=limit, **attributes)).tracks
+                tracks = (await ctx.sp.recommendations(track_ids=cur_track, limit=limit, **attributes)).tracks
                 if len(tracks) <= lim:
                     songs.extend(tracks)
                 else:
                     songs.extend(random.sample(tracks, lim))
                 break
             except Exception as e:
+                print(e)
                 if num < 5:
                     # Some reason it just sometimes hates it more than it needs to
                     logging.info('Generation instruction failed, trying again')

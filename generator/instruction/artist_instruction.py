@@ -3,9 +3,11 @@ from . import instruction, Instruction
 import generator
 import tekore as tk
 
+from ..context import Context
 
-@instruction('artist_tracks')
-async def artist_tracks(sp, artist: tk.model.Artist = None, fetch: int = 50, select: int = 50) -> list[tk.model.Track]:
+
+@instruction('artist_tracks', aliases=['art'])
+async def artist_tracks(ctx: Context, artist: tk.model.Artist = None, fetch: int = 50, select: int = 50) -> list[tk.model.Track]:
     """
     Gets a specific artists tracks
 
@@ -13,7 +15,7 @@ async def artist_tracks(sp, artist: tk.model.Artist = None, fetch: int = 50, sel
     fetch (int) - Amount of songs to get
     select (int) - Random selection of the fetched songs
     """
-    tracks = await generator.spotify.get_artist_songs(sp, artist)
+    tracks = await generator.spotify.get_artist_songs(ctx.sp, artist)
     if len(tracks) > fetch:
         tracks = tracks[:fetch]
     if fetch == select:
@@ -26,8 +28,8 @@ async def artist_tracks(sp, artist: tk.model.Artist = None, fetch: int = 50, sel
     return tracks
 
 
-@instruction('artist_top')
-async def artist_top(sp: tk.Spotify, artist: tk.model.Artist = None, amount: int = 10) -> list[tk.model.Track]:
+@instruction('artist_top', aliases=['art_t'])
+async def artist_top(ctx: Context, artist: tk.model.Artist = None, amount: int = 10) -> list[tk.model.Track]:
     """
     Top artist tracks
 
@@ -36,11 +38,11 @@ async def artist_top(sp: tk.Spotify, artist: tk.model.Artist = None, amount: int
     """
     if generator.verbose:
         generator.logger.info('Fetched {0} top songs from artist {1}'.format(amount, artist.name))
-    return (await sp.artist_top_tracks(market='US', artist_id=artist.id))[:amount]
+    return (await ctx.sp.artist_top_tracks(market='US', artist_id=artist.id))[:amount]
 
 
-@instruction('related_artists')
-async def related_artists(sp: tk.Spotify, artist: tk.model.Artist = None, instruction: Instruction = None, amount: int = 20) -> list[tk.model.Track]:
+@instruction('related_artists', aliases=['rltd_art'])
+async def related_artists(ctx: Context, artist: tk.model.Artist = None, instruction: Instruction = None, amount: int = 20) -> list[tk.model.Track]:
     """
     Get related artists and execute an instruction on them
 
@@ -48,22 +50,22 @@ async def related_artists(sp: tk.Spotify, artist: tk.model.Artist = None, instru
     amount (int) - Amount of artists to get
     instruction (int) - An instruction that has an `artist` argument in it
     """
-    related = await sp.artist_related_artists(artist.id)
+    related = await ctx.sp.artist_related_artists(artist.id)
     if len(related) > amount:
         related = related[:amount]
     songs = []
     for artist in related:
         kwargs = instruction[1]
         kwargs['artist'] = artist
-        songs.extend(await instruction[0].run(sp, **kwargs))
+        songs.extend(await instruction[0].run(ctx.sp, **kwargs))
     if generator.verbose:
         generator.logger.info('Fetched {0} similar from artist {1} and collected {2} songs'.format(len(related), artist.name, len(songs)))
     return songs
 
 
-@instruction('album_tracks')
-async def album_tracks(sp: tk.Spotify, album: tk.model.Album = None) -> list[tk.model.Track]:
+@instruction('album_tracks', aliases=['album', 'alb'])
+async def album_tracks(ctx: Context, album: tk.model.Album = None) -> list[tk.model.Track]:
     songs = []
-    async for track in sp.all_items(await sp.album_tracks(album.id, limit=50)):
+    async for track in ctx.sp.all_items(await ctx.sp.album_tracks(album.id, limit=50)):
         songs.append(track)
     return songs

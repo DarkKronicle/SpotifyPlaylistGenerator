@@ -3,7 +3,7 @@ import tekore as tk
 
 
 def get_id_from_uri(query: str):
-    if query.strip().startswith('spotify:'):
+    if query.strip().startswith('spotify:') or query.strip().startswith('s:'):
         return query.split(':')[-1]
     return None
 

@@ -10,9 +10,13 @@ import logging
 import asyncio
 import platform
 
+from generator.spotify import spotify_instruction
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='Generates playlists for a user')
+    parser.add_argument('-s', '--spotify', required=False, action='store_true',
+                        help='Generate Spotify playlists')
     parser.add_argument('-a', '--all', required=False, action='store_true',
                         help='Generate all playlists')
     parser.add_argument('--no-upload', required=False, action='store_true',
@@ -28,14 +32,21 @@ def get_args():
     if len(sys.argv) <= 1:
         parser.error('No arguments provided.')
     args = parser.parse_args()
-    if not args.playlist and not args.all and not args.show_docs:
-        parser.error('You have to either specify a playlist or all.')
+    if not args.playlist and not args.all and not args.show_docs and not args.spotify:
+        parser.error('You have to either specify a playlist, all, or spotify.')
     return args
 
 
 async def async_main(sp, args):
     # We want to cache user stuff first
     await generator.setup(sp)
+
+    if args.spotify:
+        playlists = await spotify_instruction.get_user_instruction_playlists(sp)
+        for p in playlists:
+            data = await spotify_instruction.get_playlist_dict(sp, p)
+            if data is not None:
+                await spotify_instruction.generate_user_playlist(sp, p, data)
 
     if args.all:
         for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
