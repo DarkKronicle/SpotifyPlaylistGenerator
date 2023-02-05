@@ -1,10 +1,8 @@
 [separate]
     title = 'Mix {0}'
     instruction = {type = "generate", amount=50, mix_same=true, pool_size=20}
-    [separate.clear_duplicates]
-        active = true
-    [separate.random]
-        active = true
+    clear_duplicates = true
+    random = true
 
 
 [[instructions]]

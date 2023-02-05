@@ -6,7 +6,7 @@ import tekore as tk
 from ..context import Context
 
 
-@instruction('playlist_tracks', aliases=['play'])
+@instruction('playlist_tracks', aliases=['play', 'ptracks'])
 async def playlist_songs(ctx: Context, name: tk.model.Playlist, amount: int = -1, sample: int = -1) -> list[tk.model.Track]:
     """
     Get playlist tracks

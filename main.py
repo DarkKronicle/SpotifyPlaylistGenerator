@@ -1,4 +1,5 @@
 import pathlib
+from pprint import pprint
 
 import httpx
 import tekore as tk
@@ -10,6 +11,7 @@ import logging
 import asyncio
 import platform
 
+from generator.parser.script_parser import ScriptParser
 from generator.spotify import spotify_instruction
 
 
@@ -44,9 +46,7 @@ async def async_main(sp, args):
     if args.spotify:
         playlists = await spotify_instruction.get_user_instruction_playlists(sp)
         for p in playlists:
-            data = await spotify_instruction.get_playlist_dict(sp, p)
-            if data is not None:
-                await spotify_instruction.generate_user_playlist(sp, p, data)
+            await spotify_instruction.generate_user_playlist(sp, p)
 
     if args.all:
         for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
@@ -98,6 +98,13 @@ def main():
         # Windows be like
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(async_main(sp, args))
+
+
+def script_parser():
+    parser = ScriptParser('''
+    Top{top_tracks|term=short|amount=50|,|top_tracks|term=medium|amount=20}
+    ''')
+    print(str(parser.parse()))
 
 
 if __name__ == '__main__':

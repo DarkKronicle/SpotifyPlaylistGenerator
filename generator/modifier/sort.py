@@ -3,7 +3,7 @@ import random
 from . import *
 
 import generator
-from generator import sort
+from generator import sort, DEFAULT_VALUE
 from generator.sort import group
 from generator import spotify
 from generator import instruction as inst
@@ -30,6 +30,8 @@ async def audio_sort_playlist(ctx: Context, songs, method: str, reverse: bool = 
 
 @modifier('random')
 async def random_sort(ctx: Context, songs, active: bool):
+    if active == DEFAULT_VALUE:
+        active = True
 
     if not active:
         return songs
@@ -69,7 +71,8 @@ async def groups(ctx: Context, songs, instruction: dict, title: str = 'Mix {0}',
         if i > 10:
             generator.logger.info('Woah, way more than 10!')
             return songs
-        cluster_songs: list = await inst.run(ctx, dict(instruction), tracks=list(cluster[0]))
+        inner_context = ctx.with_tracks(list(cluster[0]))
+        cluster_songs: list = await instruction.run(inner_context, tracks=list(cluster[0]))
         if keep_seed:
             cluster_songs.extend(list(cluster[0]))
         if sort is not None:

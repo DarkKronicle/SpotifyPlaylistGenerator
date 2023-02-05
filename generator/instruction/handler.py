@@ -100,16 +100,19 @@ async def _parse_list(ctx: Context, val: list, target):
     if not _list_of_type(val, str):
         return val
 
-    gotten = None
-    match typing.get_args(target)[0]:
-        case tk.model.Track:
-            gotten = [await ctx.get_track(query) for query in val]
-        case tk.model.Playlist:
-            gotten = [await ctx.get_playlist(query) for query in val]
-        case tk.model.Album:
-            gotten = [await ctx.get_album(query) for query in val]
-        case tk.model.Artist:
-            gotten = [await ctx.get_artist(query) for query in val]
+    target_type = typing.get_args(target)[0]
+    if target_type == tk.model.Track and ctx.tracks is not None:
+        return ctx.tracks
+    gotten = [await _parse_other(ctx, q, target_type) for q in val]
+    # match typing.get_args(target)[0]:
+    #     case tk.model.Track:
+    #         gotten = [await ctx.get_track(query) for query in val]
+    #     case tk.model.Playlist:
+    #         gotten = [await ctx.get_playlist(query) for query in val]
+    #     case tk.model.Album:
+    #         gotten = [await ctx.get_album(query) for query in val]
+    #     case tk.model.Artist:
+    #         gotten = [await ctx.get_artist(query) for query in val]
     if gotten is None:
         return val
     return filter(lambda x: x is not None, gotten)
@@ -149,6 +152,12 @@ async def _parse_other(ctx: Context, val, target):
                 return await ctx.get_artist(val)
             case tk.model.Playlist:
                 return await ctx.get_playlist(val)
+        if target == int:
+            return int(val)
+        if target == float:
+            return float(val)
+        if target == bool:
+            return bool(val)
     return val
 
 
@@ -280,6 +289,7 @@ async def run(ctx: Context, val: dict, **kwargs):
     :return: The instruction results
     """
     # We pop this here because we don't want `type` to be an argument
+    val = val.copy()
     name = val.pop('type')
     i = _instructions[name]
     return await i.run(ctx, **val, **kwargs)

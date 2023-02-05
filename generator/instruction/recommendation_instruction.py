@@ -8,10 +8,11 @@ from generator import sort
 import tekore as tk
 
 from ..context import Context
+from ..parser.instruction_holder import Instructions
 
 
 @instruction('recommendations', aliases=['recs'])
-async def recommendations(ctx: Context, tracks: list[tk.model.Track] = None, artists: list[tk.model.Artist] = None, limit=20, pool_size=20, genres: list[str] = None, **attributes) -> list[tk.model.Track]:
+async def recommendations(ctx: Context, tracks: list[tk.model.Track] = None, artists: list[tk.model.Artist] = None, limit: int = 20, pool_size: int = 20, genres: list[str] = None, **attributes) -> list[tk.model.Track]:
     """
     Get recommendations based on some seeds (maximum 5 of all combined, with at least one)
 
@@ -56,7 +57,7 @@ async def recommendations(ctx: Context, tracks: list[tk.model.Track] = None, art
 
 
 @instruction('generate', aliases=['gen'])
-async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, mix_same=False, pool_size=15, **attributes) -> list[tk.model.Track]:
+async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, mix_same=False, pool_size: int = 15, **attributes) -> list[tk.model.Track]:
     """
     Generates many tracks from specified tracks. Can be used to generate a playlist from a playlist
 
@@ -66,6 +67,8 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
     pool_size (int) - The amount of recommendations to get for a group, and then randomly select for the limit
     """
     songs = []
+    if isinstance(tracks, Instructions):
+        tracks = await tracks.run(ctx)
     total = len(tracks)
     iters = math.ceil(len(tracks) / 5)
     analysis = await ctx.sp.tracks_audio_features([t.id for t in tracks])

@@ -41,7 +41,7 @@ async def artist_top(ctx: Context, artist: tk.model.Artist = None, amount: int =
     return (await ctx.sp.artist_top_tracks(market='US', artist_id=artist.id))[:amount]
 
 
-@instruction('related_artists', aliases=['rltd_art'])
+# @instruction('related_artists', aliases=['rltd_art'])
 async def related_artists(ctx: Context, artist: tk.model.Artist = None, instruction: Instruction = None, amount: int = 20) -> list[tk.model.Track]:
     """
     Get related artists and execute an instruction on them

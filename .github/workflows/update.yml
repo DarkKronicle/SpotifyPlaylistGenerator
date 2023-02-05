@@ -19,7 +19,7 @@ jobs:
           pip install -r requirements.txt
       - name: execute python script
         run: |
-          python main.py -a -s
+          python main.py -s
         env:
           client_id: ${{ secrets.CLIENT_ID }}
           client_secret: ${{ secrets.CLIENT_SECRET }}

@@ -1,17 +1,11 @@
-import json
 import logging
-import traceback
-from typing import Optional, Union
-
-import toml
-from tqdm import tqdm
 
 from . import get_user_playlists
 from tekore import model
-import tekore as tk
 
-from .. import instruction, modifier
 from ..context import Context
+from ..parser.instruction_holder import Instructions
+from ..parser.script_parser import ScriptParser
 
 
 async def get_user_instruction_playlists(sp, *, prefix="%"):
@@ -23,28 +17,20 @@ async def get_user_instruction_playlists(sp, *, prefix="%"):
     return filtered_playlists
 
 
-async def get_playlist_dict(sp: tk.Spotify, playlist: model.Playlist) -> Optional[dict]:
-    description = playlist.description.strip().replace("&quot;", '"')
-    if description.startswith('{'):
+def get_playlist_instructions(playlist: model.Playlist) -> list[Instructions]:
+    description = playlist.description.strip().replace("&quot;", '"').replace("&#x27;", "'")
+    instructions = []
+    for d in description.split("=-="):
         try:
-            return json.loads(description)
-        except:
-            return None
-    try:
-        return toml.loads(description)
-    except:
-        return None
+            inst = ScriptParser(d).parse()
+            instructions.append(inst)
+        except Exception as e:
+            logging.exception("Couldn't parse description from {0}".format(playlist.name), e)
+            return instructions
+    return instructions
 
 
-async def generate_user_playlist(sp, playlist: model.Playlist, data: dict):
-    pbar = tqdm(data['instructions'])
-    songs = []
-    ctx = Context(sp, playlist=playlist)
-    for i in pbar:
-        try:
-            pbar.set_description(playlist.name + ': ' + i['type'])
-            songs.extend(await instruction.run(ctx, i))
-        except:
-            traceback.print_exc()
-            logging.error('Could not run instruction ' + str(i))
-    songs = await modifier.run_modifiers(ctx, songs, data)
+async def generate_user_playlist(sp, playlist: model.Playlist):
+    ctx = Context(sp, playlist.name, playlist=playlist)
+    for i in get_playlist_instructions(playlist):
+        await i.run(ctx, True)

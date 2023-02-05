@@ -48,3 +48,22 @@ def show_all_help():
     generator.instruction.show_all_help()
     print('-------------')
     generator.modifier.show_all_help()
+
+
+class _ModifierDefault:
+
+    def __init__(self):
+        pass
+
+    def __eq__(self, o: object) -> bool:
+        return isinstance(o, _ModifierDefault)
+
+    def __str__(self):
+        return "MODIFIER DEFAULT"
+
+    def __repr__(self):
+        return "MODIFIER DEFAULT"
+
+
+DEFAULT_VALUE = _ModifierDefault()
+

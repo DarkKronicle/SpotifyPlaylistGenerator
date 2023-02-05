@@ -42,7 +42,7 @@ async def top_tracks(ctx: Context, amount: int = 20, term: str = 'short') -> lis
     return top
 
 
-@instruction('top_artists', aliases=['top_art'])
+# @instruction('top_artists', aliases=['top_art'])
 async def top_artists(ctx: Context, instruction: Instruction = None, term: str = 'short', amount: int = 10) -> list[tk.model.Track]:
     """
     Gets a users top artists

@@ -10,11 +10,15 @@ class Context:
     def __init__(
             self,
             sp: tekore.Spotify,
+            name: str,
             *,
-            playlist: Optional[tekore.model.Playlist] = None
+            playlist: Optional[tekore.model.Playlist] = None,
+            tracks = None
     ):
         self.sp = sp
+        self.name = name
         self.playlist = playlist
+        self.tracks = tracks
 
     async def get_track(self, val: str):
         return await spotify.get_track(self.sp, val)
@@ -29,5 +33,8 @@ class Context:
         if val == 'this' and self.playlist is not None:
             return self.playlist
         return await spotify.get_playlist(self.sp, val)
+
+    def with_tracks(self, tracks):
+        return Context(self.sp, self.name, playlist=self.playlist, tracks=tracks)
 
 

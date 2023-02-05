@@ -5,6 +5,7 @@ from . import *
 import generator.spotify as spotify
 import tekore as tk
 
+from .. import DEFAULT_VALUE
 from ..context import Context
 
 
@@ -15,6 +16,8 @@ async def clear_duplicates(ctx: Context, songs: list[tk.model.Track], active: bo
 
     active (bool) - Whether it is active
     """
+    if active == DEFAULT_VALUE:
+        active = True
     if not active:
         return songs
     uris = []
@@ -123,6 +126,8 @@ async def allowed_region(ctx: Context, songs, region: str = 'US'):
 
 @modifier('explicit')
 async def explicit_filter(ctx: Context, songs, explicit: bool = False):
+    if explicit == DEFAULT_VALUE:
+        explicit = False
     new_songs = []
     for track in songs:
         if track.explicit == explicit:
