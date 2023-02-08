@@ -1,11 +1,14 @@
+import inspect
 import logging
 import traceback
+from pprint import pprint
 from typing import Optional
 
 import generator
 from functools import wraps
 
 from generator.context import Context
+from generator.instruction.handler import _parse_func
 
 
 def modifier(name: str, sort: int = 0, *, aliases: Optional[list] = None):
@@ -17,9 +20,17 @@ def modifier(name: str, sort: int = 0, *, aliases: Optional[list] = None):
 
     def decorator(func):
 
-        _modifiers[name] = func
+        signature = inspect.signature(func)
+
+        async def inner_run(ctx, songs, *args, **kwargs):
+            # This wraps the function in the ability to be parsed by a dictionary
+            args = (ctx, songs) + args
+            args, kwargs = await _parse_func(ctx, signature, *args, **kwargs)
+            return await func(*args, **kwargs)
+
+        _modifiers[name] = inner_run
         for a in aliases:
-            _modifiers[a] = func
+            _modifiers[a] = inner_run
         _sort[name] = sort
         _help[(name, aliases)] = func.__doc__
 
