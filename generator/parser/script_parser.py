@@ -203,7 +203,10 @@ class ScriptParser:
                     elif elements[0][0] == Token.DICT_ELEMENT:
                         raw_mod[dict_key][''.join(elements[0][1:])] = DEFAULT_VALUE
                     else:
-                        raw_mod[''.join(elements[0])] = DEFAULT_VALUE
+                        if len(elements) == 1 and len(raw_mod) == 0:
+                            raw_mod['upload'] = ''.join(elements[0])
+                        else:
+                            raw_mod[''.join(elements[0])] = DEFAULT_VALUE
 
                     elements = []
                     continue

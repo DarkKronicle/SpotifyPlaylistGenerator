@@ -7,7 +7,7 @@ import tekore as tk
 from ..context import Context
 
 
-@instruction('saved_tracks', aliases=['liked_tracks', 'liked'])
+@instruction('saved_tracks', aliases=['liked', 'liked'])
 async def saved_tracks(ctx: Context, sample: int = -1, amount: int = -1, artist: tk.model.Artist = None) -> list[tk.model.Track]:
     """
     Saved tracks
@@ -21,7 +21,7 @@ async def saved_tracks(ctx: Context, sample: int = -1, amount: int = -1, artist:
         tracks = list(filter(lambda t: artist.name.lower() in [a.name.lower() for a in t.artists], tracks))
     if 0 < amount < len(tracks):
         tracks = tracks[:amount]
-    if 0 < sample < amount:
+    if 0 < sample and (sample < amount or amount < 0):
         tracks = random.sample(tracks, sample)
     if generator.verbose:
         generator.logger.info('Fetched {0} songs saved songs'.format(len(tracks)))
