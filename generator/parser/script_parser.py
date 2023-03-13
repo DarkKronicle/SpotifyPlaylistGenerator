@@ -161,7 +161,7 @@ class ScriptParser:
                     elements.append(self._inner_parse(self.tokens[inner_start:inner_end]))
                 if instruction_depth == 0 and modifier_depth == 0:
                     elements.append(''.join(current_part))
-                    if len(elements) == 0 and len(current_instruction.values()) == 0:
+                    if len(elements) == 1 and len(current_instruction.values()) == 0:
                         current_instruction['type'] = ''.join(elements[0])
                         elements = []
                         raw_instruction.append(current_instruction)
@@ -172,7 +172,7 @@ class ScriptParser:
                             raw_instruction.append(current_instruction)
                             current_instruction = {}
                         elements = []
-                    raw_instruction.append(current_instruction)
+                    # raw_instruction.append(current_instruction)
                 continue
             if instruction_depth > 1 or (instruction_depth == 1 and modifier_depth == 1):
                 continue

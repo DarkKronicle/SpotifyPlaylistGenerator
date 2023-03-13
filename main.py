@@ -19,8 +19,6 @@ def get_args():
     parser = argparse.ArgumentParser(description='Generates playlists for a user')
     parser.add_argument('-s', '--spotify', required=False, action='store_true',
                         help='Generate Spotify playlists')
-    parser.add_argument('-a', '--all', required=False, action='store_true',
-                        help='Generate all playlists')
     parser.add_argument('--no-upload', required=False, action='store_true',
                         help='Prevents playlists from being modified')
     parser.add_argument('-p', '--playlist', required=False,
@@ -46,19 +44,9 @@ async def async_main(sp, args):
     if args.spotify:
         playlists = await spotify_instruction.get_user_instruction_playlists(sp)
         for p in playlists:
+            if args.playlist and p.name != args.playlist:
+                continue
             await spotify_instruction.generate_user_playlist(sp, p)
-
-    if args.all:
-        for playlist in pathlib.Path('./playlists').glob('**/*.toml'):
-            await generator.run_playlist_file(sp, str(playlist))
-
-    if args.playlist:
-        file = str(args.playlist)
-        if not file.startswith('playlists/'):
-            file = 'playlists/' + file
-        if not file.endswith('.toml'):
-            file = file + '.toml'
-        await generator.run_playlist_file(sp, file)
 
 
 def main():
@@ -91,6 +79,7 @@ def main():
         sp.token = tk.prompt_for_user_token(
             tk.client_id_var, tk.client_secret_var, tk.redirect_uri_var, scope=generator.scopes,
         )
+        print(sp.token.refresh_token)
     else:
         sp.token = tk.refresh_user_token(tk.client_id_var, tk.client_secret_var, tk.user_refresh_var)
 

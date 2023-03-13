@@ -72,7 +72,8 @@ async def groups(ctx: Context, songs, instruction: dict, title: str = 'Mix {0}',
             generator.logger.info('Woah, way more than 10!')
             return songs
         inner_context = ctx.with_tracks(list(cluster[0]))
-        cluster_songs: list = await instruction.run(inner_context, tracks=list(cluster[0]))
+        cluster_songs = list(cluster[0])
+        cluster_songs: list = await instruction.run(inner_context, tracks=list(cluster_songs))
         if keep_seed:
             cluster_songs.extend(list(cluster[0]))
         if sort is not None:

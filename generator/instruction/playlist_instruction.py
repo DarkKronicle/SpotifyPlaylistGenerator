@@ -23,3 +23,8 @@ async def playlist_songs(ctx: Context, name: tk.model.Playlist, amount: int = -1
     if generator.verbose:
         generator.logger.info('Fetched {0} songs from playlist {1}'.format(len(tracks), name.name))
     return tracks
+
+
+@instruction('none')
+async def none_instruction(ctx: Context, tracks: list[tk.model.Track]):
+    return tracks
