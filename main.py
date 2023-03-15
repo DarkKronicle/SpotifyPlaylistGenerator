@@ -32,7 +32,7 @@ def get_args():
     if len(sys.argv) <= 1:
         parser.error('No arguments provided.')
     args = parser.parse_args()
-    if not args.playlist and not args.all and not args.show_docs and not args.spotify:
+    if not args.playlist and not args.show_docs and not args.spotify:
         parser.error('You have to either specify a playlist, all, or spotify.')
     return args
 

@@ -172,7 +172,8 @@ class ScriptParser:
                             raw_instruction.append(current_instruction)
                             current_instruction = {}
                         elements = []
-                    # raw_instruction.append(current_instruction)
+                    if current_instruction:
+                        raw_instruction.append(current_instruction)
                 continue
             if instruction_depth > 1 or (instruction_depth == 1 and modifier_depth == 1):
                 continue
