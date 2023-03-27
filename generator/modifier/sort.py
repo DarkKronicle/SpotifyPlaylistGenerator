@@ -60,7 +60,7 @@ async def sort_playlist(sp, songs, method: str, reverse: bool = False, **kwargs)
 
 
 @modifier('separate')
-async def groups(ctx: Context, songs, instruction: dict, title: str = 'Mix {0}', n=-1, keep_seed=False, **modifiers):
+async def groups(ctx: Context, songs, instruction: dict, title: str = 'Mix {0}', n: int = -1, keep_seed=False, **modifiers):
     songs = await clear_duplicates(ctx, songs, True)
     analysis = await ctx.sp.tracks_audio_features([t.id for t in songs])
     if n > 10:
@@ -81,10 +81,15 @@ async def groups(ctx: Context, songs, instruction: dict, title: str = 'Mix {0}',
         if generator.prevent_uploading:
             if not generator.silent:
                 generator.logger.info(
-                    'Uploading songs for ' + title.format(i) + ' was skipped because prevent_uploading is on')
+                    'Uploading songs for ' + title.format(i + 1) + ' was skipped because prevent_uploading is on')
             continue
         playlist = await spotify.get_or_create_playlist(ctx.sp, title.format(i + 1))
         await spotify.replace_all_playlist(ctx.sp, playlist, cluster_songs)
+        try:
+            await spotify.generate_cover(ctx.sp, playlist, cluster_songs)
+        except Exception as e:
+            print(e)
+
         if generator.verbose:
             generator.logger.info('Uploaded {0} songs to {1} (id {2})'.format(len(songs), playlist.name, playlist.id))
     return songs

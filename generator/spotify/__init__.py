@@ -1,5 +1,6 @@
 from generator.util.cache import cache
 import tekore as tk
+from generator.util import image
 
 
 def get_id_from_uri(query: str):
@@ -105,4 +106,12 @@ async def get_or_create_playlist(sp, name):
         if p.name.lower() == name.lower():
             return p
     return await sp.playlist_create((await sp.current_user()).id, name)
+
+
+async def generate_cover(sp: tk.Spotify, playlist: tk.model.Playlist, songs: list[tk.model.Track]):
+    analysis = await sp.tracks_audio_features([t.id for t in songs])
+    base_string = image.get_playlist_image(playlist.name, analysis)
+    # image is a 64 base encoded string
+    await sp.playlist_cover_image_upload(playlist.id, base_string)
+
 

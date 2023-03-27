@@ -111,18 +111,25 @@ class ScriptParser:
 
         for i, t in enumerate(tokens):
             if t == Token.MODIFIER_START:
+                # Modifier, increase depth by one
                 modifier_depth += 1
                 if modifier_depth == 2:
+                    # Start of nested
                     inner_start = i
                 continue
+
             if t == Token.MODIFIER_END:
+                # Remove one depth
                 modifier_depth -= 1
                 continue
+
             if t == Token.INSTRUCTION_START:
                 instruction_depth += 1
                 if (instruction_depth == 2 or modifier_depth == 1) and inner_start < 0:
+                    # We are within a nested thing now
                     inner_start = i
                 elif instruction_depth == 1:
+                    # New instruction
                     if current_part:
                         elements.append(current_part)
                     current_part = []

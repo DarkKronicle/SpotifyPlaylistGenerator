@@ -4,3 +4,8 @@ tqdm~=4.64.0
 numpy~=1.23.1
 scikit-learn~=1.1.1
 scipy~=1.8.1
+scikit-learn-extra
+seaborn~=0.12.2
+httpx~=0.23.3
+setuptools~=65.5.1
+matplotlib~=3.7.1

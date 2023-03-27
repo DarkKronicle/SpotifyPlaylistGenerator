@@ -1,5 +1,6 @@
 import logging
 import math
+import statistics
 
 from . import instruction
 import random
@@ -71,12 +72,19 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
         tracks = await tracks.run(ctx)
     total = len(tracks)
     iters = math.ceil(len(tracks) / 5)
-    analysis = await ctx.sp.tracks_audio_features([t.id for t in tracks])
+    analysis: list[tk.model.AudioFeatures] = await ctx.sp.tracks_audio_features([t.id for t in tracks])
     pair = [(tracks[i], analysis[i]) for i in range(len(tracks))]
-    if len(tracks) < 50:
-        tracks = sort.traveling(pair)
-    else:
-        tracks = sort.traveling(pair, attributes=['valence'])
+    if not random_sample:
+        if len(tracks) < 50:
+            tracks = sort.traveling(pair)
+        else:
+            tracks = sort.traveling(pair, attributes=['valence'])
+
+    targets = {
+        'target_valence': statistics.median((a.valence for a in analysis)),
+        'target_energy': statistics.median((a.energy for a in analysis)),
+        'target_instrumentalness': statistics.median((a.instrumentalness for a in analysis)),
+    }
 
     save_tracks = []
     if mix_same:
@@ -94,7 +102,7 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
                 if "limit" in attributes:
                     attributes.pop("limit")
                 limit = pool_size if pool_size > lim else lim
-                tracks = (await ctx.sp.recommendations(track_ids=cur_track, limit=limit, **attributes)).tracks
+                tracks = (await ctx.sp.recommendations(track_ids=cur_track, limit=limit, **attributes, **targets)).tracks
                 if len(tracks) <= lim:
                     songs.extend(tracks)
                 else:
