@@ -9,3 +9,4 @@ seaborn~=0.12.2
 httpx~=0.23.3
 setuptools~=65.5.1
 matplotlib~=3.7.1
+Pillow~=9.4.0

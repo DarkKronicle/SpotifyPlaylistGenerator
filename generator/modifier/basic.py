@@ -54,7 +54,8 @@ async def upload(ctx: Context, songs, name: str = None):
     playlist = await spotify.get_or_create_playlist(ctx.sp, name)
     await spotify.replace_all_playlist(ctx.sp, playlist, songs)
     try:
-        await spotify.generate_cover(ctx.sp, playlist, songs)
+        if len(songs) > 0:
+            await spotify.generate_cover(ctx.sp, playlist, songs)
     except Exception as e:
         print(e)
     if generator.verbose:
