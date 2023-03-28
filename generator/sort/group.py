@@ -40,7 +40,7 @@ def get_groups(tracks, analysis, n=-1):
     for i in range(1, len(silhouettes)):
         s = silhouettes[i]
         dif = s - prev
-        if abs(prev_dif - dif) < 0.08:
+        if abs(prev_dif - dif) < 0.05:
             best_k = i - 1
             break
         prev_dif = dif
