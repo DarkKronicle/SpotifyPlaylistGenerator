@@ -1,6 +1,5 @@
-import aiohttp as aiohttp
+import aiohttp
 import matplotlib
-import seaborn.categorical
 from io import BytesIO
 
 import seaborn as sns
