@@ -10,6 +10,7 @@ import tekore as tk
 
 from ..context import Context
 from ..parser.instruction_holder import Instructions
+import numpy as np
 
 
 @instruction('recommendations', aliases=['recs'])
@@ -57,6 +58,10 @@ async def recommendations(ctx: Context, tracks: list[tk.model.Track] = None, art
     return recs
 
 
+def get_prob_list(analysis: list):
+    return [np.percentile(analysis, 25), np.percentile(analysis, 50), np.percentile(analysis, 50), np.percentile(analysis, 75)]
+
+
 @instruction('generate', aliases=['gen'])
 async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: int = 50, random_sample: bool = True, mix_same=False, pool_size: int = 15, **attributes) -> list[tk.model.Track]:
     """
@@ -81,9 +86,9 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
             tracks = sort.traveling(pair, attributes=['valence'])
 
     targets = {
-        'target_valence': statistics.median((a.valence for a in analysis)),
-        'target_energy': statistics.median((a.energy for a in analysis)),
-        'target_instrumentalness': statistics.median((a.instrumentalness for a in analysis)),
+        'target_valence': get_prob_list([a.valence for a in analysis]),
+        'target_energy': get_prob_list([a.energy for a in analysis]),
+        'target_instrumentalness': get_prob_list([a.instrumentalness for a in analysis]),
     }
 
     save_tracks = []
@@ -102,7 +107,8 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
                 if "limit" in attributes:
                     attributes.pop("limit")
                 limit = pool_size if pool_size > lim else lim
-                tracks = (await ctx.sp.recommendations(track_ids=cur_track, limit=limit, **attributes, **targets)).tracks
+                temp_targets = {k: random.choice(v) for k, v in targets.items()}
+                tracks = (await ctx.sp.recommendations(track_ids=cur_track, limit=limit, **attributes, **temp_targets)).tracks
                 if len(tracks) <= lim:
                     songs.extend(tracks)
                 else:
