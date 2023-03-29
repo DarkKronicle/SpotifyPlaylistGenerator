@@ -109,6 +109,7 @@ async def get_or_create_playlist(sp, name):
 
 
 async def generate_cover(sp: tk.Spotify, playlist: tk.model.Playlist, songs: list[tk.model.Track]):
+    songs = list(filter(lambda x: x is not None and x.id is not None, songs))
     analysis = await sp.tracks_audio_features([t.id for t in songs])
     base_string = await image.get_playlist_image(songs, analysis)
     # image is a 64 base encoded string

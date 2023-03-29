@@ -1,3 +1,4 @@
+import generator.util
 from . import modifier
 from generator import instruction
 from generator import sort
@@ -26,7 +27,7 @@ async def similar_sort(sp, songs, tracks: dict, **kwargs):
         tracks = inbetween
 
     attributes = kwargs.get('attributes', ['energy', 'valence'])
-    features = sort.get_features(list(top_analysis) + analysis, attributes)
+    features = generator.util.get_features(list(top_analysis) + analysis, attributes)
     data = np.array(features)
     return sort.similar.sort_by_similar(songs, data, tracks)
 

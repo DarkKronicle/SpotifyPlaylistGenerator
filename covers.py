@@ -1,5 +1,9 @@
+import traceback
+
 import httpx
 import tekore as tk
+from tqdm import tqdm
+
 import generator
 
 import argparse
@@ -14,44 +18,45 @@ from generator.spotify import spotify_instruction
 
 def get_args():
     parser = argparse.ArgumentParser(description='Generates playlists for a user')
-    parser.add_argument('-s', '--spotify', required=False, action='store_true',
-                        help='Generate Spotify playlists')
-    parser.add_argument('--no-upload', required=False, action='store_true',
-                        help='Prevents playlists from being modified')
-    parser.add_argument('-p', '--playlist', required=False,
-                        help='Generate a specific playlist')
-    parser.add_argument('--show-docs', required=False, action='store_true',
-                        help='Prints out all instructions and modifiers')
     parser.add_argument('-v', '--verbose', required=False, action='store_true',
                         help='Log more information on what everything does')
     parser.add_argument('--prompt', required=False, action='store_true',
                         help='Prompt for new token')
-    if len(sys.argv) <= 1:
-        parser.error('No arguments provided.')
     args = parser.parse_args()
-    if not args.playlist and not args.show_docs and not args.spotify:
-        parser.error('You have to either specify a playlist, all, or spotify.')
     return args
 
 
-async def async_main(sp, args):
+async def async_main(sp: tk.Spotify, args):
     # We want to cache user stuff first
-    await generator.setup(sp)
-
-    if args.spotify:
-        playlists = await spotify_instruction.get_user_instruction_playlists(sp)
-        for p in playlists:
-            if args.playlist and p.name != args.playlist:
+    playlists: list[tk.model.Playlist] = await generator.spotify.get_user_playlists(sp)
+    user: tk.model.PrivateUser = await sp.current_user()
+    to_cover = []
+    for playlist in playlists:
+        if playlist.owner.id != user.id:
+            # Don't own this one
+            continue
+        if any(c.isdigit() for c in playlist.name):
+            continue
+        if playlist.name[0] == '%':
+            continue
+        if playlist.name in ('Electro', 'Peace', 'Math', 'Ambience'):
+            continue
+        if playlist.name != 'The Dark Playlist of Doom':
+            continue
+        to_cover.append(playlist)
+    for playlist in tqdm(to_cover):
+        try:
+            tracks = await generator.spotify.get_playlist_tracks(sp, playlist)
+            if len(tracks) < 5:
                 continue
-            await spotify_instruction.generate_user_playlist(sp, p)
+            await generator.spotify.generate_cover(sp, playlist, tracks)
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
 
 
 def main():
     args = get_args()
-
-    if args.show_docs:
-        generator.show_all_help()
-        return
 
     if args.verbose:
         generator.verbose = True
@@ -61,9 +66,6 @@ def main():
         format='%(asctime)s %(levelname)-8s %(message)s',
         datefmt='%m-%d %H:%M:%S'
     )
-
-    if args.no_upload:
-        generator.prevent_uploading = True
 
     manager = generator.config.ConfigManager()
 
