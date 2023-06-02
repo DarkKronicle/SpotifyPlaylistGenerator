@@ -90,6 +90,14 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
         'target_energy': get_prob_list([a.energy for a in analysis]),
         'target_instrumentalness': get_prob_list([a.instrumentalness for a in analysis]),
     }
+    #
+    # for k in list(attributes.keys()):
+    #     if 'valence' in k:
+    #         del targets['target_valence']
+    #     if 'energy' in k:
+    #         del targets['target_energy']
+    #     if 'instrumentalness' in k:
+    #         del targets['target_instrumentalness']
 
     save_tracks = []
     if mix_same:
@@ -115,6 +123,7 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
                     songs.extend(random.sample(tracks, lim))
                 break
             except Exception as e:
+                print("AAAA")
                 print(e)
                 if num < 5:
                     # Some reason it just sometimes hates it more than it needs to

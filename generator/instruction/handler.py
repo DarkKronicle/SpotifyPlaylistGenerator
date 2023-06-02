@@ -117,7 +117,7 @@ async def _parse_list(ctx: Context, val: list, target):
     #         gotten = [await ctx.get_artist(query) for query in val]
     if gotten is None:
         return val
-    return filter(lambda x: x is not None, gotten)
+    return list(filter(lambda x: x is not None, gotten))
 
 
 async def _parse_dict(ctx: Context, val: dict, target):

@@ -58,6 +58,7 @@ async def upload(ctx: Context, songs, name: str = None):
             await spotify.generate_cover(ctx.sp, playlist, songs)
     except Exception as e:
         print(e)
+        print("BOOO")
     if generator.verbose:
         generator.logger.info('Uploaded {0} songs to {1} (id {2})'.format(len(songs), playlist.name, playlist.id))
     return songs
@@ -70,11 +71,13 @@ async def remove_artist(ctx: Context, songs, artist: list[str]):
 
     artist (list) - List of artists
     """
+    if isinstance(artist, str):
+        artist = [artist]
     artists = await generator.instruction.parse_var(ctx, list[tk.model.Artist], artist)
     new_songs = []
     for song in songs:
         if all(
-                [a.name != art.name for art in artists for a in song.artists]
+                [a.uri != art.uri for art in artists for a in song.artists]
         ):
             new_songs.append(song)
     if generator.verbose:

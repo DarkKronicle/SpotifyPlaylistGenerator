@@ -5,18 +5,28 @@ from ..context import Context
 
 
 @modifier('energy')
-async def energy(ctx: Context, songs, lower=0, upper=1):
+async def energy(ctx: Context, songs, lower: float = 0, upper: float = 1):
     return await filter_by_var(ctx.sp, songs, 'energy', lower, upper)
 
 
 @modifier('danceability')
-async def danceability(ctx: Context, songs, lower=0, upper=1):
+async def danceability(ctx: Context, songs, lower: float = 0, upper: float = 1):
     return await filter_by_var(ctx.sp, songs, 'danceability', lower, upper)
 
 
+@modifier('valence')
+async def valence(ctx: Context, songs, lower: float = 0, upper: float = 1):
+    return await filter_by_var(ctx.sp, songs, 'valence', lower, upper)
+
+
 @modifier('instrumentalness')
-async def instrumentalness(ctx: Context, songs, lower=0, upper=1):
+async def instrumentalness(ctx: Context, songs, lower: float = 0, upper: float = 1):
     return await filter_by_var(ctx.sp, songs, 'instrumentalness', lower, upper)
+
+
+@modifier('acousticness')
+async def acaousticness(ctx: Context, songs, lower: float = 0, upper: float = 1):
+    return await filter_by_var(ctx.sp, songs, 'acousticness', lower, upper)
 
 
 async def filter_by_var(sp: tk.Spotify, songs, attribute, lower=0, upper=1):

@@ -73,30 +73,33 @@ async def get_playlist_image(songs: list[tk.model.FullTrack], analysis: list[tk.
     graph = Image.open(buffer)
     image.paste(graph, (10, 160), graph)
 
-    album_images = []
-    i = 0
-    while len(album_images) < 2 and i < len(songs):
-        if len(songs[i].album.images) == 0:
+    try:
+        album_images = []
+        i = 0
+        while len(album_images) < 2 and i < len(songs):
+            if len(songs[i].album.images) == 0:
+                i += 1
+                continue
+            url = songs[i].album.images[0].url
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as r:
+                    if r.status != 200:
+                        i += 1
+                        continue
+                    img_raw = await r.read()
+
+            album_images.append(Image.open(BytesIO(img_raw)))
             i += 1
-            continue
-        url = songs[i].album.images[0].url
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                if r.status != 200:
-                    i += 1
-                    continue
-                img_raw = await r.read()
 
-        album_images.append(Image.open(BytesIO(img_raw)))
-        i += 1
-
-    if len(album_images) == 2:
-        album_image = album_images[0]
-        album_image = album_image.resize((150, 150))
-        image.paste(album_image, (0, 0))
-        album_image = album_images[1]
-        album_image = album_image.resize((150, 150))
-        image.paste(album_image, (150, 0))
+        if len(album_images) == 2:
+            album_image = album_images[0]
+            album_image = album_image.resize((150, 150))
+            image.paste(album_image, (0, 0))
+            album_image = album_images[1]
+            album_image = album_image.resize((150, 150))
+            image.paste(album_image, (150, 0))
+    except:
+        print("Couldn't make cover image")
 
     final_buffer = BytesIO()
     image.save(final_buffer, 'png')
