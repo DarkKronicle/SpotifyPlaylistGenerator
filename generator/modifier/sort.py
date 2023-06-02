@@ -66,7 +66,6 @@ async def groups(ctx: Context, songs, instruction: dict, title: str = 'Mix {0}',
     if n > 10:
         n = 10
     clusters = group.get_groups(songs, analysis)
-    print(len(clusters))
 
     for i, cluster in enumerate(clusters):
         if i > 10:
