@@ -14,4 +14,4 @@ Go ahead and configure the playlist file until you come up with a script that su
 
 ## How it works
 
-To generate a playlist the program creates a list of 'instructions' to carry out. This is what is within the `<playlist>.toml` file. These instructions can do many things such as get liked tracks, similar tracks, recommendations, and more.
+Does some very fancy stuff by parsing the playlist description in Spotify.
