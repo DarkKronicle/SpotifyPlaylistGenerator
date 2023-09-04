@@ -51,6 +51,8 @@ async def remove_ai(ctx: Context, songs, active: bool):
     if not active:
         return songs
 
+    sp = ctx.sp
+
     analysis = await sp.tracks_audio_features([t.id for t in songs])
     full_info = await sp.tracks([t.id for t in songs])
     new_songs = []
@@ -70,10 +72,10 @@ async def remove_ai(ctx: Context, songs, active: bool):
         elif album.release_date_precision == 'day':
             date = datetime.strptime(album.release_date, '%Y-%m-%m')
             date = date.replace(tzinfo=pytz.timezone('UTC'))
-        if a.instrumentalness > 0.6 and (date is not None and date > s and date < e) and (i.popularity is not None and i.popularity < 20):
+        if a.instrumentalness > 0.6 and (date is not None and date > start and date < end) and (i.popularity is not None and i.popularity < 20):
             removed += 1
             continue
-        new_songs.add(s)
+        new_songs.append(s)
     if removed > 0:
         print("Removed AI: " + str(removed))
     return new_songs

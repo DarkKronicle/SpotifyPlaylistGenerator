@@ -27,7 +27,8 @@ async def clear_duplicates(ctx: Context, songs: list[tk.model.Track], active: bo
             uris.append(track.uri)
             new_songs.append(track)
     if generator.verbose:
-        generator.logger.info('Removed {0} duplicates'.format(len(songs) - len(new_songs)))
+        generator.logger.info('Removed {0} duplicates'.format(
+            len(songs) - len(new_songs)))
     return new_songs
 
 
@@ -49,7 +50,8 @@ async def upload(ctx: Context, songs, name: str = None):
     """
     if generator.prevent_uploading:
         if not generator.silent:
-            generator.logger.info('Uploading songs for ' + name + ' was skipped because prevent_uploading is on')
+            generator.logger.info(
+                'Uploading songs for ' + name + ' was skipped because prevent_uploading is on')
         return songs
     playlist = await spotify.get_or_create_playlist(ctx.sp, name)
     await spotify.replace_all_playlist(ctx.sp, playlist, songs)
@@ -60,7 +62,8 @@ async def upload(ctx: Context, songs, name: str = None):
         print(e)
         print("BOOO")
     if generator.verbose:
-        generator.logger.info('Uploaded {0} songs to {1} (id {2})'.format(len(songs), playlist.name, playlist.id))
+        generator.logger.info('Uploaded {0} songs to {1} (id {2})'.format(
+            len(songs), playlist.name, playlist.id))
     return songs
 
 
@@ -81,7 +84,8 @@ async def remove_artist(ctx: Context, songs, artist: list[str]):
         ):
             new_songs.append(song)
     if generator.verbose:
-        generator.logger.info('Removed {0} songs from artists {1}'.format(len(songs) - len(new_songs), [a.name for a in artists]))
+        generator.logger.info('Removed {0} songs from artists {1}'.format(
+            len(songs) - len(new_songs), [a.name for a in artists]))
     return new_songs
 
 
@@ -101,7 +105,8 @@ async def remove_from_playlist(ctx: Context, songs, playlist: str):
         ):
             new_songs.append(song)
     if generator.verbose:
-        generator.logger.info('Removed {0} songs from playlist {1} (id {2})'.format(len(songs) - len(new_songs), playlist.name, playlist.id))
+        generator.logger.info('Removed {0} songs from playlist {1} (id {2})'.format(
+            len(songs) - len(new_songs), playlist.name, playlist.id))
     return new_songs
 
 
@@ -128,7 +133,8 @@ async def allowed_region(ctx: Context, songs, region: str = 'US'):
         if region in track.available_markets:
             new_songs.append(track)
     if generator.verbose:
-        generator.logger.info('Removed {0} songs that are not allowed in region {1}'.format(len(songs) - len(new_songs), region))
+        generator.logger.info('Removed {0} songs that are not allowed in region {1}'.format(
+            len(songs) - len(new_songs), region))
     return new_songs
 
 
@@ -145,4 +151,3 @@ async def explicit_filter(ctx: Context, songs, explicit: bool = False):
         generator.logger.info(
             "Removed {0} songs that didn't match filter explicit = {1}".format(len(songs) - len(new_songs), explicit))
     return new_songs
-
