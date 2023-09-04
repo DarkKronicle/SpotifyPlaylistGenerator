@@ -2,6 +2,7 @@ from . import *
 import tekore as tk
 
 from ..context import Context
+from .. import DEFAULT_VALUE
 
 from datetime import datetime
 
@@ -46,7 +47,7 @@ async def filter_by_var(sp: tk.Spotify, songs, attribute, lower=0, upper=1):
 @modifier('remove_ai')
 async def remove_ai(ctx: Context, songs, active: bool):
     if active == DEFAULT_VALUE:
-        active = true
+        active = True
     if not active:
         return songs
 
