@@ -3,6 +3,8 @@ import tekore as tk
 
 from ..context import Context
 
+from datetime import datetime
+
 
 @modifier('energy')
 async def energy(ctx: Context, songs, lower: float = 0, upper: float = 1):
@@ -39,3 +41,40 @@ async def filter_by_var(sp: tk.Spotify, songs, attribute, lower=0, upper=1):
         if lower <= val <= upper:
             new_songs.append(s)
     return new_songs
+
+@modifier('remove_ai')
+async def remove_ai(ctx: Context, songs, active: bool):
+    if active == DEFAULT_VALUE:
+        active = true
+    if not active:
+        return songs
+
+    analysis = await sp.tracks_audio_features([t.id for t in songs])
+    full_info = await sp.tracks([t.id for t in songs])
+    new_songs = []
+    start = datetime(2022, 2, 1)
+    end = datetime(2022, 4, 1)
+    removed = 0
+    for i in range(len(analysis)):
+        a: tk.model.AudioFeatures = analysis[i]
+        s: tk.model.Track = songs[i]
+        i: tk.model.FullTrack = full_info[i]
+        album = i.album
+        date = None
+        if album.release_date_precision == 'day':
+            date = datetime.strptime(album.release_date, '%Y-%m-%d')
+        elif album.release_date_precision == 'month':
+            date = datetime.strptime(album.release_date, '%Y-%m')
+        elif album.release_date_precision == 'day':
+            date = datetime.strptime(album.release_date, '%Y-%m-%m')
+            date = date.replace(tzinfo=pytz.timezone('UTC'))
+        if a.instrumentalness > 0.6 and (date is not None and date > s and date < e) and (i.popularity is not None and i.popularity < 20:
+            removed += 1
+            continue
+        new_songs.add(s)
+    if removed > 0:
+        print("Removed AI: " + str(removed))
+    return new_songs
+
+
+
