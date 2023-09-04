@@ -42,6 +42,7 @@ async def filter_by_var(sp: tk.Spotify, songs, attribute, lower=0, upper=1):
             new_songs.append(s)
     return new_songs
 
+
 @modifier('remove_ai')
 async def remove_ai(ctx: Context, songs, active: bool):
     if active == DEFAULT_VALUE:
@@ -68,13 +69,10 @@ async def remove_ai(ctx: Context, songs, active: bool):
         elif album.release_date_precision == 'day':
             date = datetime.strptime(album.release_date, '%Y-%m-%m')
             date = date.replace(tzinfo=pytz.timezone('UTC'))
-        if a.instrumentalness > 0.6 and (date is not None and date > s and date < e) and (i.popularity is not None and i.popularity < 20:
+        if a.instrumentalness > 0.6 and (date is not None and date > s and date < e) and (i.popularity is not None and i.popularity < 20):
             removed += 1
             continue
         new_songs.add(s)
     if removed > 0:
         print("Removed AI: " + str(removed))
     return new_songs
-
-
-
