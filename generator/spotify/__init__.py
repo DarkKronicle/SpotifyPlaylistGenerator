@@ -77,9 +77,18 @@ async def get_artist_songs(sp: tk.Spotify, artist: tk.model.Artist):
 
 
 @cache()
-async def get_artist_albums(sp: tk.Spotify, artist: tk.model.Artist):
-    page = await sp.artist_albums(artist.id, limit=50)
-    return [album async for album in sp.all_items(page)]
+async def get_artist_albums(sp: tk.Spotify, artist: tk.model.Artist, limit=-1):
+    page = await sp.artist_albums(artist.id, limit=50 if limit <= 0 else limit)
+    if limit <= 0:
+        return [album async for album in sp.all_items(page)]
+    albums = []
+    i = 0
+    async for album in sp.all_items(page):
+        if i >= limit:
+            return albums
+        albums.append(album)
+        i += 1
+    return albums
 
 
 @cache()
@@ -116,3 +125,7 @@ async def generate_cover(sp: tk.Spotify, playlist: tk.model.Playlist, songs: lis
     await sp.playlist_cover_image_upload(playlist.id, base_string)
 
 
+@cache()
+async def get_following_artists(sp: tk.Spotify):
+    page = await sp.followed_artists(limit=50)
+    return [artist async for artist in sp.all_items(page)]

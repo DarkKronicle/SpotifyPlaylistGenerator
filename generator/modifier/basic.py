@@ -60,7 +60,6 @@ async def upload(ctx: Context, songs, name: str = None):
             await spotify.generate_cover(ctx.sp, playlist, songs)
     except Exception as e:
         print(e)
-        print("BOOO")
     if generator.verbose:
         generator.logger.info('Uploaded {0} songs to {1} (id {2})'.format(
             len(songs), playlist.name, playlist.id))
