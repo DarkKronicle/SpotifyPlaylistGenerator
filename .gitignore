@@ -41,3 +41,5 @@ share/python-wheels/
 MANIFEST
 
 config.toml
+
+.devenv
