@@ -3,9 +3,11 @@
   python3Packages,
   fetchPypi,
   ...
-}: let
+}:
+let
 
-in python3Packages.buildPythonPackage rec {
+in
+python3Packages.buildPythonPackage rec {
   pname = "tekore";
   version = "5.5.0";
 
@@ -16,10 +18,10 @@ in python3Packages.buildPythonPackage rec {
 
   pyproject = true;
   build-system = [
-      python3Packages.setuptools
-      python3Packages.wheel
-      python3Packages.httpx
-      python3Packages.pydantic
+    python3Packages.setuptools
+    python3Packages.wheel
+    python3Packages.httpx
+    python3Packages.pydantic
   ];
 
 }
