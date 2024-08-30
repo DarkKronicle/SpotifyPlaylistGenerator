@@ -38,12 +38,13 @@ async def get_playlist_image(songs: list[tk.model.FullTrack], analysis: list[tk.
         data=data,
         inner=None,
         saturation=1,
-        orient='horizontal'
+        orient='h'
     )
     # ax.set_title(name, fontdict={
     #     'fontsize': 30,
     #     # 'horizontalalignment': 'left',
     # })
+    ax.set_yticks([0, 1, 2])
     ax.collections[0].set_edgecolor('white')
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)

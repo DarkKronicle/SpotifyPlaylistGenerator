@@ -35,7 +35,10 @@ async def async_main(sp: tk.Spotify, args):
         if playlist.owner.id != user.id:
             # Don't own this one
             continue
-        if any(c.isdigit() for c in playlist.name):
+        # if any(c.isdigit() for c in playlist.name):
+            # continue
+        if playlist.name.startswith("Mix"):
+            to_cover.append(playlist)
             continue
         if playlist.name[0] == '%':
             continue
@@ -43,8 +46,8 @@ async def async_main(sp: tk.Spotify, args):
             continue
         if playlist.name != 'The Dark Playlist of Doom':
             continue
-        to_cover.append(playlist)
     for playlist in tqdm(to_cover):
+        print(playlist.name)
         try:
             tracks = await generator.spotify.get_playlist_tracks(sp, playlist)
             if len(tracks) < 5:
@@ -62,7 +65,7 @@ def main():
         generator.verbose = True
 
     logging.basicConfig(
-        level='INFO',
+        level='INFO' if args.verbose else 'WARNING',
         format='%(asctime)s %(levelname)-8s %(message)s',
         datefmt='%m-%d %H:%M:%S'
     )

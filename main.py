@@ -57,7 +57,7 @@ def main():
         generator.verbose = True
 
     logging.basicConfig(
-        level='INFO',
+        level='INFO' if args.verbose else 'WARNING',
         format='%(asctime)s %(levelname)-8s %(message)s',
         datefmt='%m-%d %H:%M:%S'
     )
