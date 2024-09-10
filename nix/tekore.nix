@@ -9,11 +9,11 @@ let
 in
 python3Packages.buildPythonPackage rec {
   pname = "tekore";
-  version = "5.5.0";
+  version = "5.5.1";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-meCQ9S9CnRXkrZ13/wYOQyy5SrkJJuJRSfMd6gClO8w=";
+    hash = "sha256-AgvXoNo7mQSUK8wwJOx7t/bkWwLNgLGyRIFy+xP90As=";
   };
 
   pyproject = true;
