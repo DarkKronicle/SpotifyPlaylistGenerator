@@ -7,6 +7,7 @@ import random
 import generator
 from generator import sort
 import tekore as tk
+import asyncio
 
 from ..context import Context
 from ..parser.instruction_holder import Instructions
@@ -59,7 +60,11 @@ async def recommendations(ctx: Context, tracks: list[tk.model.Track] = None, art
 
 
 def get_prob_list(analysis: list):
-    return [np.percentile(analysis, 25), np.percentile(analysis, 50), np.percentile(analysis, 50), np.percentile(analysis, 75)]
+    # Make sure we don't have a number that goes to a scientific number
+    q25 = max(0.001, np.percentile(analysis, 25))
+    q50 = max(0.001, np.percentile(analysis, 50))
+    q75 = max(0.001, np.percentile(analysis, 75))
+    return [q25, q50, q50, q75]
 
 
 @instruction('generate', aliases=['gen'])
@@ -108,10 +113,13 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
         cut = min(5, len(tracks))
         lim = math.floor(amount / iters) if iters == i + 1 else math.ceil(amount / iters)
         num = 0
+        errors = 0
         while True:
+            errors += 1
             num += 1
             cur_track = [t.id for t in tracks[:cut]]
             try:
+                await asyncio.sleep(3)
                 if "limit" in attributes:
                     attributes.pop("limit")
                 limit = pool_size if pool_size > lim else lim
@@ -123,9 +131,13 @@ async def playlist_generate(ctx: Context, tracks: list[tk.model.Track], amount: 
                     songs.extend(random.sample(tracks, lim))
                 break
             except Exception as e:
-                print("AAAA")
                 print(e)
-                if num < 5:
+                if isinstance(e, tk.TooManyRequests):
+                    logging.info("Being rate limited, waiting 60 seconds")
+                    print(e.response['rety-after'])
+                    await asyncio.sleep(60)
+                    continue
+                if errors < 5:
                     # Some reason it just sometimes hates it more than it needs to
                     logging.info('Generation instruction failed, trying again')
                     random.shuffle(cur_track)
