@@ -1,3 +1,7 @@
+# ARCHIVED
+
+Unfortunately, Spotify decided to restrict a [bunch of API endpoints](https://community.spotify.com/t5/Spotify-for-Developers/Changes-to-Web-API/td-p/6540414) that this project used. This has not worked since late 2024.
+
 # Spotify Playlist Generator
 
 This is an advanced playlist generator for Spotify meant to provide the user with lots of control. There is a sample playlist script in `playlists/background.toml` (one of my main ones I listen to).
